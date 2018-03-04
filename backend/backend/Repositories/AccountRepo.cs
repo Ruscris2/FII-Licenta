@@ -1,31 +1,59 @@
-﻿
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace backend.Repositories
 {
     public class AccountRepo : IAccountRepo
     {
         private readonly DatabaseContext dbContext;
-        private readonly DbSet<Account> entities;
+        private readonly DbSet<Account> accounts;
 
         public AccountRepo(DatabaseContext context)
         {
             dbContext = context;
-            entities = dbContext.Set<Account>();
+            accounts = dbContext.Set<Account>();
         }
 
-        public async Task Add(Account account)
+        // Logic for registering a new account
+        public async Task<Tuple<bool, string>> Add(Account account)
         {
-            await entities.AddAsync(account);
-            await dbContext.SaveChangesAsync();
-        }
+            // Check if email and username are unique
+            var check = (from acc in dbContext.Accounts
+                        where acc.Email == account.Email || acc.Username == account.Username
+                        select acc).Count();
 
-        public async Task<IEnumerable<Account>> GetAll()
-        {
-            return await entities.ToListAsync();
+            // If no account has the email and/or username already, create a new account
+            if (check == 0)
+            {
+                // Hash the password using SHA256
+                byte[] bytes = Encoding.UTF8.GetBytes(account.Password);
+                SHA256Managed cipher = new SHA256Managed();
+                byte[] hash = cipher.ComputeHash(bytes);
+
+                // Digest the hash
+                account.Password = "";
+                foreach (byte b in hash)
+                    account.Password += string.Format("{0:x2}", b);
+
+                try
+                {
+                    await accounts.AddAsync(account);
+                    await dbContext.SaveChangesAsync();
+                }
+                catch(Exception ex)
+                {
+                    return Tuple.Create(false, "Unexpected error while creating account!");
+                }
+
+                return Tuple.Create(true, "");
+            }
+
+            return Tuple.Create(false, "Username or email already exists!");
         }
     }
 }

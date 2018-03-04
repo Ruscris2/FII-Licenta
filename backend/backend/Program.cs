@@ -10,6 +10,7 @@ namespace backend
     {
         static void Main(string[] args)
         {
+            // Create the web host
             var server = new WebHostBuilder()
                 .UseKestrel()
                 .UseStartup<Program>()
@@ -20,9 +21,11 @@ namespace backend
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add database and mvc to services
             services.AddMvc();
             services.AddDbContext<DatabaseContext>();
 
+            // Register repositories
             services.AddTransient<IAccountRepo, AccountRepo>();
         }
 

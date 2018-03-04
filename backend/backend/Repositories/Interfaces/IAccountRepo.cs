@@ -1,13 +1,12 @@
 ﻿
 using backend.Models;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace backend.Repositories
 {
     public interface IAccountRepo
     {
-        Task Add(Account account);
-        Task<IEnumerable<Account>> GetAll();
+        Task<Tuple<bool, string>> Add(Account account);
     }
 }

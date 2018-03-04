@@ -20,7 +20,15 @@ namespace backend
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // Connect to the database
             optionsBuilder.UseSqlServer("Server = (LocalDB)\\MSSQLLocalDB; Database = FIILicense; Trusted_Connection = true;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // Add constraints to the database tables
+            builder.Entity<Account>().HasIndex(x => x.Username).IsUnique();
+            builder.Entity<Account>().HasIndex(x => x.Email).IsUnique();
         }
     }
 }

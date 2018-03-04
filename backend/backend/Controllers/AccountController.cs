@@ -1,8 +1,10 @@
 ﻿
+using backend.Controllers.DTOs;
 using backend.Models;
 using backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace backend.Controllers
@@ -17,18 +19,28 @@ namespace backend.Controllers
             this.accountRepo = accountRepo;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            return Ok(await accountRepo.GetAll());
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Account dto)
+        public async Task<IActionResult> Register([FromBody] AccountDTO dto)
         {
-            Console.WriteLine("ID: " + dto.Id + " USER: " + dto.Username + " EMAIL: " + dto.Email);
-            await accountRepo.Add(dto);
-            return Ok();
+            // Check if json is valid
+            if(ModelState.IsValid)
+            {
+                Account newAccount = new Account();
+                newAccount.Username = dto.Username;
+                newAccount.Email = dto.Email;
+                newAccount.Password = dto.Password;
+
+                // Attempt to create a new account
+                Tuple<bool, string> result = await accountRepo.Add(newAccount);
+
+                // If sucessful, return ok, else add error to model and return bad request
+                if(result.Item1 == true)
+                    return Ok();
+                else
+                    ModelState.AddModelError("", result.Item2);
+            }
+
+            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
         }
     }
 }
