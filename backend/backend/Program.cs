@@ -25,6 +25,12 @@ namespace backend
             services.AddMvc();
             services.AddDbContext<DatabaseContext>();
 
+            // Configure Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Backend API", Description = "API" });
+            });
+
             // Register repositories
             services.AddTransient<IAccountRepo, AccountRepo>();
         }
@@ -32,7 +38,14 @@ namespace backend
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory logger)
         {
             logger.AddConsole(LogLevel.Information);
+
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Backend API");
+            });
         }
     }
 }
