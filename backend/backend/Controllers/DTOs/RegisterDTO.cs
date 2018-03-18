@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers.DTOs
 {
-    public class AccountDTO
+    public class RegisterDTO
     {
         [Required, MaxLength(32)]
         public string Username { get; set; }

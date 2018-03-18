@@ -1,2 +1,5 @@
 
 *.lock
+*.dll
+*.dll
+*.pdb

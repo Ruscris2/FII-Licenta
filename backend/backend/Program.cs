@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using backend.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace backend
 {
@@ -25,6 +28,25 @@ namespace backend
             services.AddMvc();
             services.AddDbContext<DatabaseContext>();
 
+            // Add authentication
+            services.AddAuthentication(a =>
+            {
+                a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+
+                cfg.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = "FIILicense",
+                    ValidAudience = "FIILicense",
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String("bGljZW50YS1maWktMjAxOA=="))
+                };
+            });
+
+
             // Configure Swagger
             services.AddSwaggerGen(c =>
             {
@@ -39,6 +61,7 @@ namespace backend
         {
             logger.AddConsole(LogLevel.Information);
 
+            app.UseAuthentication();
             app.UseMvc();
 
             app.UseSwagger();

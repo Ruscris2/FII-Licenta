@@ -45,7 +45,7 @@ namespace backend.Repositories
                     await accounts.AddAsync(account);
                     await dbContext.SaveChangesAsync();
                 }
-                catch(Exception ex)
+                catch
                 {
                     return Tuple.Create(false, "Unexpected error while creating account!");
                 }
@@ -55,5 +55,17 @@ namespace backend.Repositories
 
             return Tuple.Create(false, "Username or email already exists!");
         }
+
+        // Get an account based on it's identifier (username or email)
+        public Tuple<Account, string> GetByIdentifier(string identifier)
+        {
+            Account account = (from acc in dbContext.Accounts
+                               where acc.Username == identifier || acc.Email == identifier
+                               select acc).FirstOrDefault();
+
+            return Tuple.Create(account, "");
+        }
+
+
     }
 }
