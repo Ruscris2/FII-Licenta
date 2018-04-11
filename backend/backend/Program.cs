@@ -24,6 +24,12 @@ namespace backend
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Setup CORS
+            services.AddCors(c => c.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
+
             // Add database and mvc to services
             services.AddMvc();
             services.AddDbContext<DatabaseContext>();
@@ -61,6 +67,7 @@ namespace backend
         {
             logger.AddConsole(LogLevel.Information);
 
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
 
