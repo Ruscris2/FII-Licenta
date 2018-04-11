@@ -1,3 +1,27 @@
-<p>
-  login works!
-</p>
+<div class="container">
+  <div class="py-5">
+    <img class="d-block mx-auto mb-4" src="assets/images/logo.png">
+  </div>
+
+  <form>
+    <h5 #loginLabelView class="py-3 text-center" id="login-label">{{loginLabel}}</h5>
+
+    <div class="login-field mb-2">
+      <input type="text" name="email" class="form-control" required [(ngModel)]="model.identifier" #identifier="ngModel" placeholder="Username or Email Address">
+      <div *ngIf="identifier.errors && (identifier.dirty || identifier.touched)" class="alert alert-danger">
+        Please enter a username or email address!
+      </div>
+    </div>
+
+    <div class="login-field mb-2">
+      <input type="password" name="password" class="form-control" required [(ngModel)]="model.password" #password="ngModel" placeholder="Password">
+      <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger">
+        Please enter a password!
+      </div>
+    </div>
+
+    <div class="login-field">
+      <button class="btn btn-primary btn-lg btn-block" type="submit" (click)="onLoginClick()">Login</button>
+    </div>
+  </form>
+</div>

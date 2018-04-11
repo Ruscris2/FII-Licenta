@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { routes } from './app.router';
 import { BackendService } from './backend.service';
+import { CookieService } from 'ngx-cookie-service';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './dashboard/navbar/navbar.component';
@@ -12,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditorComponent } from './dashboard/editor/editor.component';
+import { AccountboxComponent } from './dashboard/navbar/accountbox/accountbox.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { EditorComponent } from './dashboard/editor/editor.component';
     RegisterComponent,
     LoginComponent,
     DashboardComponent,
-    EditorComponent
+    EditorComponent,
+    AccountboxComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,7 @@ import { EditorComponent } from './dashboard/editor/editor.component';
     NgbModule.forRoot(),
     routes
   ],
-  providers: [ BackendService ],
+  providers: [ BackendService, CookieService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }
