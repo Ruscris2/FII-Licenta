@@ -3,6 +3,11 @@
   height: 30px;
   margin-right: 10px;
   padding: 0;
+  cursor: pointer;
+}
+
+#logonav:focus {
+  outline: none;
 }
 
 .navbar {
@@ -14,5 +19,5 @@
 }
 
 .nav-item a {
-  color: #c6a4cb;
+  color: #c9a7ce;
 }

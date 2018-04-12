@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-light bg-light">
-  <img id="logonav" src="assets/images/logo_small.png">
-  <a class="navbar-brand" href="#">OpenPhoto</a>
+  <img id="logonav" src="assets/images/logo_small.png" routerLink="/">
+  <a class="navbar-brand" routerLink="/">OpenPhoto</a>
 
   <button class="navbar-toggler p-0 border-0" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" (click)="isCollapsed = !isCollapsed">
     <span class="navbar-toggler-icon"></span>
@@ -8,13 +8,13 @@
 
   <div class="collapse navbar-collapse" id="navbarsExampleDefault" [ngbCollapse]="isCollapsed">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Editor <span class="sr-only">(current)</span></a>
+      <li [routerLinkActive]="['active']" class="nav-item">
+        <a class="nav-link" routerLink="/editor">Editor <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
+      <li [routerLinkActive]="['active']" class="nav-item">
         <a class="nav-link" href="#">Gallery</a>
       </li>
-      <li class="nav-item">
+      <li [routerLinkActive]="['active']" class="nav-item">
         <a class="nav-link" href="#">Explore</a>
       </li>
     </ul>

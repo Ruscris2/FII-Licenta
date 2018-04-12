@@ -54,14 +54,55 @@ namespace backend.Controllers
         }
 
         [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateInfo([FromBody] UpdateDTO dto)
+        {
+            if (ModelState.IsValid)
+            {
+                // TODO: We assume that identifier is valid, might not always be the case
+                var username = HttpContext.User.Identity.Name;
+                Tuple<Account, string> result = _accountRepo.GetByIdentifier(username);
+
+                if (dto.FirstName != null)
+                    result.Item1.FirstName = dto.FirstName;
+                if (dto.LastName != null)
+                    result.Item1.LastName = dto.LastName;
+                if (dto.Country != null)
+                    result.Item1.Country = dto.Country;
+                if (dto.City != null)
+                    result.Item1.City = dto.City;
+                if (dto.Address != null)
+                    result.Item1.Address = dto.Address;
+                if (dto.ZipCode != null)
+                    result.Item1.ZipCode = dto.ZipCode;
+
+                await _accountRepo.Update(result.Item1);
+
+                return Ok();
+            }
+
+            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+        }
+
+        [Authorize]
         [HttpGet]
         public IActionResult AccountInfo()
         {
             var username = HttpContext.User.Identity.Name;
 
+            // TODO: Check if identifier is valid, even if here it should be always valid
             Tuple<Account, string> result = _accountRepo.GetByIdentifier(username);
             
-            return Ok(new { username = result.Item1.Username, email = result.Item1.Email });
+            return Ok(new
+            { username = result.Item1.Username,
+              email = result.Item1.Email,
+              firstName = result.Item1.FirstName,
+              lastName = result.Item1.LastName,
+              address = result.Item1.Address,
+              country = result.Item1.Country,
+              city = result.Item1.City,
+              zipcode = result.Item1.ZipCode
+            });
         }
     }
 }

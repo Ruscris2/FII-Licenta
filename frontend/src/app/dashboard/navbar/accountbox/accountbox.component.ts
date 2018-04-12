@@ -45,4 +45,8 @@ export class AccountboxComponent implements OnInit {
   onRegisterNavClicked() {
     this.router.navigateByUrl('/register');
   }
+
+  onSettingsClicked() {
+    this.router.navigateByUrl('/settings');
+  }
 }

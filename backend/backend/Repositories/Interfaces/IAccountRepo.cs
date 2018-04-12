@@ -9,5 +9,6 @@ namespace backend.Repositories
     {
         Task<Tuple<bool, string>> Add(Account account);
         Tuple<Account, string> GetByIdentifier(string identifier);
+        Task Update(Account account);
     }
 }

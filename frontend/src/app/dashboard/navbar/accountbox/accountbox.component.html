@@ -1,7 +1,7 @@
 
 <div *ngIf="loggedIn" class="form-inline">
-  <p id="username">{{username}}</p>
-  <button class="btn btn-primary"><img class="navbarbtn" src="assets/images/settings.svg"></button>
+  <p id="username"><b>{{username}}</b></p>
+  <button class="btn btn-primary" (click)="onSettingsClicked()"><img class="navbarbtn" src="assets/images/settings.svg"></button>
   <button class="btn btn-primary ml-1" (click)="onLogoutClicked()"><img class="navbarbtn" src="assets/images/logout.svg"></button>
 </div>
 

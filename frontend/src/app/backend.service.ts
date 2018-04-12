@@ -47,4 +47,29 @@ export class BackendService {
 
     return this.httpClient.get(this.apiAddress + 'account', { headers: headers });
   }
+
+  pingToken(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'token', { headers: headers });
+  }
+
+  updateAccountInfo(token: string, firstName: string, lastName: string, country: string, city: string, address: string, zipcode: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      firstName: firstName,
+      lastName: lastName,
+      country: country,
+      city: city,
+      address: address,
+      zipCode: zipcode
+    };
+
+    return this.httpClient.put(this.apiAddress + 'account', json, { headers: headers });
+  }
 }

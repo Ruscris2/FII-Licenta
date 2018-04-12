@@ -1,13 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BackendService } from '../backend.service';
 import { RegisterModel } from '../models/register.model';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   @ViewChild('firstName') firstNameField;
   @ViewChild('lastName') lastNameField;
   @ViewChild('username') usernameField;
@@ -22,7 +23,7 @@ export class RegisterComponent {
 
   backendErrors = [];
 
-  constructor(private backendService: BackendService) {}
+  constructor(private backendService: BackendService, private authService: AuthService) {}
 
   onRegisterClick() {
     // Validate input
@@ -76,6 +77,10 @@ export class RegisterComponent {
         this.registerComplete = true;
       },
       error => { this.backendErrors = error.error; });
+  }
+
+  ngOnInit() {
+    this.authService.redirectValidSession();
   }
 }
 

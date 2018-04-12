@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -59,6 +59,13 @@ namespace backend.Controllers
             }
 
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Ping()
+        {
+            return Ok();
         }
     }
 }

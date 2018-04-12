@@ -66,6 +66,10 @@ namespace backend.Repositories
             return Tuple.Create(account, "");
         }
 
-
+        public async Task Update(Account account)
+        {
+            accounts.Update(account);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
