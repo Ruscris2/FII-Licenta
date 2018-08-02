@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using backend.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using backend.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace backend
@@ -61,6 +62,7 @@ namespace backend
 
             // Register repositories
             services.AddTransient<IAccountRepo, AccountRepo>();
+            services.AddTransient<IPhotoRepo, PhotoRepo>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory logger)

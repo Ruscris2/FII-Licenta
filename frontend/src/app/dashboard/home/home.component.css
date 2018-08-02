@@ -1,0 +1,41 @@
+
+.container {
+  margin-top: 25px;
+}
+
+.upload_btn {
+  text-align: center;
+  cursor: pointer;
+  height: 100px;
+}
+
+.upload_btn h4 {
+  padding-top: 32px;
+  color: ghostwhite;
+  opacity: 75%;
+  text-shadow: 1px 1px 2px black;
+}
+
+.news_box {
+  height: 100px;
+  border: 2px solid #6a85e1;
+  padding: 0;
+}
+
+.news_title {
+  background-color: #6a85e1;
+}
+
+.news_title p {
+  color: white;
+  padding: 5px;
+  padding-left: 15px;
+  text-shadow: 1px 1px 2px black;
+  margin: 0;
+}
+
+.news_info p {
+  text-indent: 10px;
+  padding-left: 15px;
+  padding-top: 5px;
+}

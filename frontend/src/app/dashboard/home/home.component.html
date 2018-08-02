@@ -1,0 +1,22 @@
+
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="col-md-12 upload_btn box-shadow"
+           [@uploadBtnAnim]="uploadBtnAnimState" (@uploadBtnAnim.done)="onAnimEnd($event)" routerLink="/upload">
+        <h4>Upload a photo</h4>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="col-md-12 news_box bg-white box-shadow">
+        <div class="news_title">
+          <p>Welcome to OpenPhoto!</p>
+        </div>
+        <div class="news_info">
+          <p>This is the perfect place to upload, edit and share your creative photos with the whole world. Hopefully
+          you will enjoy the experience!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

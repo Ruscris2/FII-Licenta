@@ -7,6 +7,7 @@ namespace backend
     public class DatabaseContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
         public DatabaseContext()
         {

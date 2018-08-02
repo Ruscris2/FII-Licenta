@@ -16,6 +16,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditorComponent } from './dashboard/editor/editor.component';
 import { AccountboxComponent } from './dashboard/navbar/accountbox/accountbox.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
+import { HomeComponent } from './dashboard/home/home.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { UploadComponent } from './dashboard/upload/upload.component';
+import { FileUploadDirective } from './fileupload.directive';
 
 
 @NgModule({
@@ -27,10 +31,14 @@ import { SettingsComponent } from './dashboard/settings/settings.component';
     DashboardComponent,
     EditorComponent,
     AccountboxComponent,
-    SettingsComponent
+    SettingsComponent,
+    HomeComponent,
+    UploadComponent,
+    FileUploadDirective
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     NgbModule.forRoot(),

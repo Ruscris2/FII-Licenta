@@ -1,0 +1,20 @@
+
+<main role="main" class="container">
+  <div class="upload_form bg-white box-shadow">
+    <p id="upload_tutorial">Drag and drop the photos you wish to upload:</p>
+    <div id="upload_box" fileupload (filesHovered)="filesHoveredEvent($event)"
+         (filesDropped)="filesDroppedEvent($event)" [ngClass]="{'hoverActive' : fileHoverModeActive}">
+      <div class="upload_item" *ngFor="let file of fileList">
+        <p>{{file.name}}</p>
+        <p class="remove_btn" (click)="onRemoveClicked(file)">X</p>
+      </div>
+      <div *ngIf="fileList.length == 0">
+        <p class="drag_drop_info">Drag & Drop files here!</p>
+      </div>
+    </div>
+
+    <div class="upload_btn_container">
+      <button class="btn btn-primary btn-lg btn-block" type="submit" (click)="onUploadClicked()">Upload</button>
+    </div>
+  </div>
+</main>

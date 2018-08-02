@@ -1,0 +1,64 @@
+
+.container {
+  margin-top: 25px;
+  padding-bottom: 25px;
+}
+
+#upload_tutorial {
+  padding-left: 40px;
+  padding-top: 15px;
+}
+
+#upload_box {
+  height: 200px;
+  border: 1px solid #6a85e1;
+  margin-left: 35px;
+  margin-right: 35px;
+  margin-bottom: 30px;
+  overflow-y: scroll;
+}
+
+.upload_form {
+  padding-bottom: 35px;
+}
+
+.upload_btn_container {
+  margin-left: 200px;
+  margin-right: 200px;
+}
+
+.hoverActive {
+  border: 2px solid green !important;
+}
+
+.upload_item {
+  border: 1px solid lightgray;
+  margin: 5px;
+}
+
+.upload_item p {
+  margin-top: 2px;
+  margin-left: 10px;
+  margin-bottom: 2px;
+  display: inline;
+}
+
+.remove_btn {
+  margin-right: 10px;
+  padding: 0;
+  color: crimson;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bolder;
+  float: right;
+}
+
+.drag_drop_info {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bolder;
+  color: lightgray;
+  user-select: none;
+  margin-top: 60px;
+  text-shadow: 1px 1px black;
+}

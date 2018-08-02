@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Injectable()
 export class BackendService {
   private apiAddress = 'http://localhost:5000/';
+  private fileApiAddress = 'http://localhost:5001/';
 
   constructor(private httpClient: HttpClient) {}
 
@@ -71,5 +72,20 @@ export class BackendService {
     };
 
     return this.httpClient.put(this.apiAddress + 'account', json, { headers: headers });
+  }
+
+  uploadRequest(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'upload', { headers: headers });
+  }
+
+  uploadFiles(filesJson: any) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json');
+
+    return this.httpClient.post(this.fileApiAddress + 'file', filesJson, { headers: headers });
   }
 }

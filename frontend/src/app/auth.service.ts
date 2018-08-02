@@ -33,4 +33,12 @@ export class AuthService {
   getToken() {
     return this.cookieService.get('sessionId');
   }
+
+  getUsername() {
+    const jwtData = this.getToken().split('.')[1];
+    const jwtDecoded = window.atob(jwtData);
+    const jwtJson = JSON.parse(jwtDecoded);
+
+    return jwtJson.unique_name;
+  }
 }

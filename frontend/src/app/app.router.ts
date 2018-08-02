@@ -6,12 +6,16 @@ import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EditorComponent } from './dashboard/editor/editor.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
+import { HomeComponent } from './dashboard/home/home.component';
+import { UploadComponent } from './dashboard/upload/upload.component';
 
 export const router: Routes = [
   { path: '', component: DashboardComponent, children: [
-      { path: '', redirectTo: 'editor', pathMatch:  'full' },
+      { path: '', redirectTo: 'home', pathMatch:  'full' },
+      { path: 'home', component: HomeComponent },
       { path: 'editor', component: EditorComponent },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
+      { path: 'upload', component: UploadComponent }
     ]},
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent }
