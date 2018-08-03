@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,15 @@ namespace backend.Repositories
                             select p).FirstOrDefault();
 
             return photo;
+        }
+
+        public List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage)
+        {
+            var photoQuery = (from p in dbContext.Photos
+                where p.OwnerId == ownerId
+                select p).Skip((page - 1) * entriesPerPage).Take(entriesPerPage);
+
+            return photoQuery.ToList();
         }
 
         public async Task Update(Photo photo)

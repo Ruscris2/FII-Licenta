@@ -20,6 +20,8 @@ import { HomeComponent } from './dashboard/home/home.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { UploadComponent } from './dashboard/upload/upload.component';
 import { FileUploadDirective } from './fileupload.directive';
+import { GalleryComponent } from './dashboard/gallery/gallery.component';
+import { GalleryEntryComponent } from './dashboard/gallery/gallery-entry/gallery-entry.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import { FileUploadDirective } from './fileupload.directive';
     SettingsComponent,
     HomeComponent,
     UploadComponent,
-    FileUploadDirective
+    FileUploadDirective,
+    GalleryComponent,
+    GalleryEntryComponent
   ],
   imports: [
     BrowserModule,

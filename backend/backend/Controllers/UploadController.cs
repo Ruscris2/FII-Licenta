@@ -46,8 +46,8 @@ namespace backend.Controllers
             if (ModelState.IsValid)
             {
                 // Check if target user exists in database
-                Tuple<Account, string> acc = _accountRepo.GetByIdentifier(dto.username);
-                if (acc.Item1 == null)
+                Account account = _accountRepo.GetByIdentifier(dto.username);
+                if (account == null)
                     ModelState.AddModelError("", "Username doesn't exist!");
                 else
                 {
@@ -59,7 +59,8 @@ namespace backend.Controllers
                         Photo photo = new Photo();
                         photo.Name = file.filename;
                         photo.ServerFilePath = file.filepath;
-                        photo.OwnerId = acc.Item1.Id;
+                        photo.ServerThumbFilePath = file.thumbfilepath;
+                        photo.OwnerId = account.Id;
                         photo.TimeAdded = DateTime.Now;
 
                         Tuple<bool, string> result = await _photoRepo.Add(photo);

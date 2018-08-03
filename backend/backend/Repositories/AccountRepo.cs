@@ -57,13 +57,13 @@ namespace backend.Repositories
         }
 
         // Get an account based on it's identifier (username or email)
-        public Tuple<Account, string> GetByIdentifier(string identifier)
+        public Account GetByIdentifier(string identifier)
         {
             Account account = (from acc in dbContext.Accounts
                                where acc.Username == identifier || acc.Email == identifier
                                select acc).FirstOrDefault();
 
-            return Tuple.Create(account, "");
+            return account;
         }
 
         public async Task Update(Account account)

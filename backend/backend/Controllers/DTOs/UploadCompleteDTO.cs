@@ -7,6 +7,7 @@ namespace backend.Controllers.DTOs
     {
         public string filename;
         public string filepath;
+        public string thumbfilepath;
     }
 
     public class UploadCompleteDTO

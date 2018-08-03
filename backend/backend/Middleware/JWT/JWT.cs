@@ -11,7 +11,7 @@ namespace backend.Middleware.JWT
     {
         private const string _secret = "bGljZW50YS1maWktMjAxOA==";
 
-        public static SecurityToken GenerateToken(Account account, int expirationMinutes = 30)
+        public static SecurityToken GenerateToken(Account account, int expirationMinutes = 900)
         {
             byte[] key = Convert.FromBase64String(_secret);
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();

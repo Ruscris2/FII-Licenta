@@ -6,6 +6,7 @@ namespace fileserver.Controllers.DTO
     {
         public string filename;
         public string filepath;
+        public string thumbfilepath;
     }
 
     public class UploadCompleteDTO

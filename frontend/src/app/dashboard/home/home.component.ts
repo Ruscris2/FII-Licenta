@@ -8,17 +8,17 @@ import {style, trigger, state, transition, animate} from '@angular/animations';
   animations: [
     trigger('uploadBtnAnim', [
       state('init', style({
-        backgroundColor: '#9563dd'
+        backgroundColor: '#7180ff'
       })),
       state('color1', style({
-        backgroundColor: '#9563dd'
+        backgroundColor: '#7180ff'
       })),
       state('color2', style({
-        backgroundColor: '#7180e1'
+        backgroundColor: '#6160ca'
       })),
       transition('init => color1', animate('5ms')),
       transition('color1 => color2', animate('1000ms ease-in')),
-      transition('color2 => color1', animate('1000ms ease-in'))
+      transition('color2 => color1', animate('1000ms ease-out'))
     ])
   ]
 })

@@ -31,8 +31,8 @@ namespace backend.Controllers
             if(ModelState.IsValid)
             {
                 // Get the account
-                Tuple<Account, string> result = _accountRepo.GetByIdentifier(dto.AccountIdentifier);
-                if (result.Item1 != null)
+                Account account = _accountRepo.GetByIdentifier(dto.AccountIdentifier);
+                if (account != null)
                 {
                     // Hash the login password using SHA256
                     byte[] bytes = Encoding.UTF8.GetBytes(dto.Password);
@@ -45,10 +45,10 @@ namespace backend.Controllers
                         dto.Password += string.Format("{0:x2}", b);
 
                     // Check if the password matches
-                    if(dto.Password == result.Item1.Password)
+                    if(dto.Password == account.Password)
                     {
                         // Create the JWT Token
-                        SecurityToken token = JWT.GenerateToken(result.Item1);
+                        SecurityToken token = JWT.GenerateToken(account);
                         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
                     }
                     else

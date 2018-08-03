@@ -7,6 +7,10 @@ using fileserver.Controllers.DTO;
 using fileserver.Logic;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Transforms;
 
 namespace fileserver.Controllers
 {
@@ -45,9 +49,12 @@ namespace fileserver.Controllers
                 return BadRequest();
 
             string directory = Path.GetDirectoryName("data/" + dto.user + "/");
+            string thumbDir = Path.GetDirectoryName("data/" + dto.user + "/thumbs/");
 
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
+            if (!Directory.Exists(thumbDir))
+                Directory.CreateDirectory(thumbDir);
 
             for (int i = 0; i < dto.files.Count; i++)
             {
@@ -69,16 +76,35 @@ namespace fileserver.Controllers
                 FileStream fs = System.IO.File.Create("data/" + dto.user + "/" + nameHash + ".png");
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                // Add a entry for the response DTO that will be transmited to the API
-                UploadedFileInfo fileInfo = new UploadedFileInfo();
-                fileInfo.filename = dto.files[i].filename;
-                fileInfo.filepath = "http://localhost:5001/filerequest/?filename=" + dto.user + "/" + nameHash + ".png";
-                responseDto.files.Add(fileInfo);
-
                 bw.Write(data);
 
                 bw.Close();
                 fs.Close();
+
+                // Create a thumbnail image from the original
+                FileStream originalImage = System.IO.File.OpenRead("data/" + dto.user + "/" + nameHash + ".png");
+                FileStream thumbnailImage = System.IO.File.OpenWrite("data/" + dto.user + "/thumbs/" + nameHash + ".png");
+
+                Image<Rgba32> image = Image.Load(originalImage);
+
+                // Compute width and height factors that result in a under 200px image
+                int factor = 1;
+                while (((image.Width / factor) > 200) || ((image.Height / factor) > 200))
+                    factor *= 2;
+
+                image.Mutate(x => x.Resize(image.Width / factor, image.Height / factor));
+                image.Save(thumbnailImage, ImageFormats.Png);
+
+                originalImage.Close();
+                thumbnailImage.Close();
+
+                // Add a entry for the response DTO that will be transmited to the API
+                UploadedFileInfo fileInfo = new UploadedFileInfo();
+                fileInfo.filename = dto.files[i].filename;
+                fileInfo.filepath = "http://localhost:5001/filerequest/?filename=" + dto.user + "/" + nameHash + ".png";
+                fileInfo.thumbfilepath = "http://localhost:5001/filerequest/?filename=" + dto.user + "/thumbs/" +
+                                         nameHash + ".png";
+                responseDto.files.Add(fileInfo);
             }
 
             // Send the response to the API

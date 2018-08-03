@@ -1,29 +1,15 @@
-﻿
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 
-namespace backend.Models
+namespace backend.Controllers.DTOs
 {
-    public class Photo
+    public class PhotoDTO
     {
-        [Required, Key]
         public int Id { get; set; }
-
-        [Required]
         public int OwnerId { get; set; }
-
-        [Required]
         public string Name { get; set; }
-
-        [Required]
         public string ServerFilePath { get; set; }
-
-        [Required]
         public string ServerThumbFilePath { get; set; }
-
-        [Required]
         public DateTime TimeAdded { get; set; }
-
         public string Description { get; set; }
         public short Rating { get; set; }
     }

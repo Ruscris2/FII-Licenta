@@ -88,4 +88,17 @@ export class BackendService {
 
     return this.httpClient.post(this.fileApiAddress + 'file', filesJson, { headers: headers });
   }
+
+  getPhotoList(token: string, page: number, entriesPerPage: number) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      page: page,
+      entriesPerPage: entriesPerPage
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo', json, { headers: headers });
+  }
 }
