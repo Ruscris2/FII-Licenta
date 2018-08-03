@@ -2,7 +2,8 @@
   <div class="row p-3 my-3 gradient box-shadow">
     <div class="col form-inline">
       <h5 class="mb-0">Your Gallery</h5>
-      <input class="ml-auto search_box" spellcheck="false" placeholder="Search..." type="text">
+      <input class="ml-auto search_box" spellcheck="false" placeholder="Search..." type="text" value="{{nameFilter}}"
+             [(ngModel)]="nameFilter" (keyup.enter)="onSearchStart()">
     </div>
   </div>
   <div class="toolbox row box-shadow">

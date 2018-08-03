@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {style, trigger, state, transition, animate} from '@angular/animations';
+import { style, trigger, state, transition, animate } from '@angular/animations';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-home',
@@ -25,10 +26,14 @@ import {style, trigger, state, transition, animate} from '@angular/animations';
 export class HomeComponent implements OnInit {
 
   uploadBtnAnimState = 'init';
+  isLogged = true;
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
+    this.authService.isLogged().then(res => {
+      this.isLogged = res;
+    });
   }
 
   onAnimEnd(event) {

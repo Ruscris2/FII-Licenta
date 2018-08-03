@@ -9,11 +9,22 @@ import {BackendService} from '../../backend.service';
 })
 export class GalleryComponent implements OnInit {
   photoList = [];
+  nameFilter = '';
 
   constructor(private backendService: BackendService, private authService: AuthService) { }
 
   ngOnInit() {
-    this.backendService.getPhotoList(this.authService.getToken(), 1, 50).subscribe(res => {
+    this.authService.redirectInvalidSession();
+
+    this.updatePhotoListView();
+  }
+
+  onSearchStart() {
+    this.updatePhotoListView();
+  }
+
+  updatePhotoListView() {
+    this.backendService.getPhotoList(this.authService.getToken(), 1, 50, this.nameFilter).subscribe(res => {
       this.photoList = <any>res;
 
       // Process the list
@@ -24,5 +35,4 @@ export class GalleryComponent implements OnInit {
       }
     });
   }
-
 }

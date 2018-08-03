@@ -9,5 +9,7 @@ namespace backend.Controllers.DTOs
 
         [Required]
         public int EntriesPerPage { get; set; }
+
+        public string NameFilter { get; set; }
     }
 }

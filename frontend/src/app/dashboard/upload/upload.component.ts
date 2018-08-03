@@ -15,6 +15,7 @@ export class UploadComponent implements OnInit {
   constructor(private backendService: BackendService, private authService: AuthService) { }
 
   ngOnInit() {
+    this.authService.redirectInvalidSession();
   }
 
   filesHoveredEvent(event: boolean) {

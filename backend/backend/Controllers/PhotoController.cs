@@ -37,7 +37,7 @@ namespace backend.Controllers
                 Account owner = _accountRepo.GetByIdentifier(username);
                 if (owner != null)
                 {
-                    List<Photo> photos = _photoRepo.GetPhotoList(owner.Id, dto.Page, dto.EntriesPerPage);
+                    List<Photo> photos = _photoRepo.GetPhotoList(owner.Id, dto.Page, dto.EntriesPerPage, dto.NameFilter);
 
                     List<PhotoDTO> response = new List<PhotoDTO>();
                     foreach (Photo photo in photos)

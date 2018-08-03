@@ -8,13 +8,13 @@
 
   <div class="collapse navbar-collapse" id="navbarsExampleDefault" [ngbCollapse]="isCollapsed">
     <ul class="navbar-nav mr-auto">
-      <li [routerLinkActive]="['active']" class="nav-item">
+      <li *ngIf="isLogged" [routerLinkActive]="['active']" class="nav-item">
         <a class="nav-link" routerLink="/editor">Editor <span class="sr-only">(current)</span></a>
       </li>
-      <li [routerLinkActive]="['active']" class="nav-item">
+      <li *ngIf="isLogged" [routerLinkActive]="['active']" class="nav-item">
         <a class="nav-link" routerLink="/gallery">Gallery</a>
       </li>
-      <li [routerLinkActive]="['active']" class="nav-item">
+      <li *ngIf="isLogged" [routerLinkActive]="['active']" class="nav-item">
         <a class="nav-link" href="#">Explore</a>
       </li>
     </ul>

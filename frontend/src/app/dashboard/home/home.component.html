@@ -1,6 +1,6 @@
 
 <main role="main" class="container">
-  <div class="row">
+  <div *ngIf="isLogged" class="row">
     <div class="col-md-3">
       <div class="col-md-12 upload_btn box-shadow"
            [@uploadBtnAnim]="uploadBtnAnimState" (@uploadBtnAnim.done)="onAnimEnd($event)" routerLink="/upload">
@@ -18,5 +18,9 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="!isLogged" class="row">
+    <p>TODO: Design when user is not logged</p>
   </div>
 </main>

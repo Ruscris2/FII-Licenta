@@ -45,12 +45,23 @@ namespace backend.Repositories
             return photo;
         }
 
-        public List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage)
+        public List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage, string nameFilter)
         {
-            var photoQuery = (from p in dbContext.Photos
-                where p.OwnerId == ownerId
-                select p).Skip((page - 1) * entriesPerPage).Take(entriesPerPage);
+            IQueryable<Photo> photoQuery;
 
+            if (nameFilter == null)
+            {
+                photoQuery = (from p in dbContext.Photos
+                    where p.OwnerId == ownerId
+                    select p).Skip((page - 1) * entriesPerPage).Take(entriesPerPage);
+            }
+            else
+            {
+                photoQuery = (from p in dbContext.Photos
+                    where p.OwnerId == ownerId && p.Name.Contains(nameFilter)
+                    select p).Skip((page - 1) * entriesPerPage).Take(entriesPerPage);
+            }
+           
             return photoQuery.ToList();
         }
 

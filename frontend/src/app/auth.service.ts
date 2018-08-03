@@ -30,6 +30,19 @@ export class AuthService {
       });
   }
 
+  isLogged(): Promise<boolean> {
+    const sessionCookieExists = this.cookieService.check('sessionId');
+    if(!sessionCookieExists) {
+      return new Promise<boolean>(resolve => resolve(false));
+    }
+
+    const token = this.cookieService.get('sessionId');
+    this.backendService.pingToken(token).subscribe(res => {
+        return new Promise<boolean>(resolve =>  resolve(true));
+    },
+      error => new Promise<boolean>(resolve =>  resolve(false)));
+  }
+
   getToken() {
     return this.cookieService.get('sessionId');
   }

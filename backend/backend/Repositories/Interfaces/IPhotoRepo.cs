@@ -9,7 +9,7 @@ namespace backend.Repositories.Interfaces
     {
         Task<Tuple<bool, string>> Add(Photo photo);
         Photo GetById(int id);
-        List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage);
+        List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage, string nameFilter);
         Task Update(Photo photo);
     }
 }
