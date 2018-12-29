@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import Renderer from './editor-main'
-
-declare var InitEditor: any;
+import Renderer from './webgl-editor/editor-main';
 
 @Component({
   selector: 'app-editor',
