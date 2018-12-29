@@ -1,17 +1,18 @@
 "use strict";
 
+const resourceMgrCls = require('./resourceManager.js');
 const sceneMgrCls = require('./sceneManager.js');
 
 class Renderer {
   Init() {
     console.log('Started initialization of WebGL editor!');
 
-    var canvas = document.getElementById('render-surface');
-    this.glContext = canvas.getContext('webgl');
+    this.canvas = document.getElementById('render-surface');
+    this.glContext = this.canvas.getContext('webgl2');
 
     if(!this.glContext) {
       console.log('Switching to experimental WebGL...');
-      this.glContext = canvas.getContext('experimental-webgl');
+      this.glContext = this.canvas.getContext('experimental-webgl');
     }
 
     if(!this.glContext) {
@@ -21,8 +22,17 @@ class Renderer {
 
     this.glContext.enable(this.glContext.DEPTH_TEST);
 
+    this.resourceManager = new resourceMgrCls.ResourceManager();
+    this.resourceManager.AddResourceToQueue('assets/shaders/vertexShader.glsl');
+    this.resourceManager.AddResourceToQueue('assets/shaders/fragmentShader.glsl');
+
+    var rendererContext = this;
+    this.resourceManager.StartResourceFetch(this.resourceManager, function() {rendererContext.LoadFinished();});
+  }
+
+  LoadFinished() {
     this.sceneManager = new sceneMgrCls.SceneManager();
-    this.sceneManager.Init(this.glContext, canvas);
+    this.sceneManager.Init(this.glContext, this.canvas, this.resourceManager);
 
     var rendererContext = this;
     requestAnimationFrame(function() {rendererContext.RenderLoop();});
@@ -33,6 +43,10 @@ class Renderer {
 
     var rendererContext = this;
     requestAnimationFrame(function() {rendererContext.RenderLoop();});
+  }
+
+  GetSceneManager() {
+    return this.sceneManager;
   }
 }
 

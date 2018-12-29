@@ -1,4 +1,9 @@
 <canvas id="render-surface" width="640" height="480">HTML5 is required for running the editor!</canvas><br/>
+<select [(ngModel)]="selectedPhoto">
+  <option *ngFor="let entry of photoList" [value]="entry.serverThumbFilePath">{{entry.name}}</option>
+</select>
+<button (click)="loadPhotoTexture()">Load</button>
+<img *ngFor="let photo of loadedPhotos" id="{{photo}}" src="{{photo}}" crossorigin="anonymous" (load)="textureLoaded(photo)">
 <img id="testtexture" src="assets/images/logo_small.png">
 <p>
   editor works!
