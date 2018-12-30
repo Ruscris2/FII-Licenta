@@ -9,6 +9,8 @@ class Renderer {
     console.log('Started initialization of WebGL editor!');
 
     this.canvas = document.getElementById('render-surface');
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
     this.glContext = this.canvas.getContext('webgl2');
 
     if(!this.glContext) {
@@ -22,6 +24,8 @@ class Renderer {
     }
 
     this.glContext.enable(this.glContext.DEPTH_TEST);
+    this.glContext.enable(this.glContext.BLEND);
+    this.glContext.blendFunc(this.glContext.SRC_ALPHA, this.glContext.ONE_MINUS_SRC_ALPHA);
 
     this.input = new inputCls.Input();
     this.input.Init(this.canvas);
@@ -43,7 +47,7 @@ class Renderer {
   }
 
   RenderLoop() {
-    this.sceneManager.DrawScene(this.glContext, this.input);
+    this.sceneManager.DrawScene(this.glContext, this.input, this.canvas);
 
     // HACK - Prevent sliding while mousedown
     this.input.relX = 0;

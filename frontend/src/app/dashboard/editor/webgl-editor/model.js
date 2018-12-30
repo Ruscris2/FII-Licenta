@@ -4,18 +4,6 @@ import * as glm from "gl-matrix";
 
 export class Model {
   constructor() {
-    this.vertices = [
-      -0.5, 0.5, 0.0,      0.0, 0.0,
-      -0.5, -0.5, 0.0,     0.0, 1.0,
-      0.5, -0.5, 0.0,      1.0, 1.0,
-      0.5, 0.5, 0.0,       1.0, 0.0
-    ];
-
-    this.indices = [
-      0, 1, 2,
-      3, 0, 2
-    ];
-
     this.posX = this.posY = this.posZ = 0.0;
     this.rotX = this.rotY = this.rotZ = 0.0;
 
@@ -23,40 +11,65 @@ export class Model {
     glm.mat4.identity(this.idenitityMatrix);
   }
 
-  Init(glContext, pipeline, id) {
+  Init(glContext, pipeline, id, width, height, canvas) {
     this.id = id;
+
+    var ssWidth, ssHeight;
+    if(width <= canvas.width && height <= canvas.height) {
+      ssWidth = (2.0 * width) / canvas.width;
+      ssHeight = (2.0 * height) / canvas.height;
+    }
+    else {
+      var ratio = width / height;
+      if(ratio > 0) {
+        ssWidth = 2.0;
+        ssHeight = 2.0 / ratio;
+      }
+      else {
+        ssWidth = 2.0 / ratio;
+        ssHeight = 2.0;
+      }
+    }
+
+    ssWidth = ssWidth / 2;
+    ssHeight = ssHeight / 2;
+
+    /*this.vertices = [
+      -0.5, 0.5, 0.0,      0.0, 0.0, // TOP LEFT TRIAG 1
+      -0.5, -0.5, 0.0,     0.0, 1.0, // BOTTOM LEFT TRIAG 1
+      0.5, -0.5, 0.0,      1.0, 1.0, // BOTTOM RIGHT TRIAG 1
+
+      0.5, 0.5, 0.0,       1.0, 0.0, // TOP RIGHT TRIAG 2
+      -0.5, 0.5, 0.0,      0.0, 0.0, // TOP LEFT TRIAG 2
+      0.5, -0.5, 0.0,      1.0, 1.0  // BOTTOM RIGHT TRIAG 2
+    ];*/
+
+    var vertices = [
+      -ssWidth, ssHeight, 0.0,      0.0, 0.0, // TOP LEFT TRIAG 1
+      -ssWidth, -ssHeight, 0.0,     0.0, 1.0, // BOTTOM LEFT TRIAG 1
+      ssWidth, -ssHeight, 0.0,      1.0, 1.0, // BOTTOM RIGHT TRIAG 1
+
+      ssWidth, ssHeight, 0.0,       1.0, 0.0, // TOP RIGHT TRIAG 2
+      -ssWidth, ssHeight, 0.0,      0.0, 0.0, // TOP LEFT TRIAG 2
+      ssWidth, -ssHeight, 0.0,      1.0, 1.0  // BOTTOM RIGHT TRIAG 2
+    ];
+
+     var indices = [
+      0, 1, 2,
+      3, 4, 5
+    ];
 
     this.vertexBuffer = glContext.createBuffer();
     this.indexBuffer = glContext.createBuffer();
 
     glContext.bindBuffer(glContext.ARRAY_BUFFER, this.vertexBuffer);
-    glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(this.vertices), glContext.STATIC_DRAW);
+    glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(vertices), glContext.STATIC_DRAW);
 
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-    glContext.bufferData(glContext.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), glContext.STATIC_DRAW);
+    glContext.bufferData(glContext.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), glContext.STATIC_DRAW);
 
-    var positionAttributeLocation = glContext.getAttribLocation(pipeline, 'vertexPosition');
-    glContext.vertexAttribPointer(
-      positionAttributeLocation, // Attribute location
-      3, // Number of elements per attribute
-      glContext.FLOAT, // Typeof attribute
-      glContext.FALSE, // Normalized
-      5 * Float32Array.BYTES_PER_ELEMENT, // Sizeof vertex
-      0 // Offset
-    );
-
-    var texCoordAttributeLocation = glContext.getAttribLocation(pipeline, 'texCoord');
-    glContext.vertexAttribPointer(
-      texCoordAttributeLocation, // Attribute location
-      2, // Number of elements per attribute
-      glContext.FLOAT, // Typeof attribute
-      glContext.FALSE, // Normalized
-      5 * Float32Array.BYTES_PER_ELEMENT, // Sizeof vertex
-      3 * Float32Array.BYTES_PER_ELEMENT // Offset
-    );
-
-    glContext.enableVertexAttribArray(positionAttributeLocation);
-    glContext.enableVertexAttribArray(texCoordAttributeLocation);
+    this.positionAttributeLocation = glContext.getAttribLocation(pipeline, 'vertexPosition');
+    this.texCoordAttributeLocation = glContext.getAttribLocation(pipeline, 'texCoord');
 
     glContext.bindBuffer(glContext.ARRAY_BUFFER, null);
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, null);
@@ -65,10 +78,31 @@ export class Model {
     glm.mat4.identity(this.worldMatrix);
   }
 
-  Render(glContext) {
+  BindData(glContext) {
     glContext.bindBuffer(glContext.ARRAY_BUFFER, this.vertexBuffer);
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
+    glContext.vertexAttribPointer(
+      this.positionAttributeLocation, // Attribute location
+      3, // Number of elements per attribute
+      glContext.FLOAT, // Typeof attribute
+      glContext.FALSE, // Normalized
+      5 * Float32Array.BYTES_PER_ELEMENT, // Sizeof vertex
+      0 // Offset
+    );
+    glContext.vertexAttribPointer(
+      this.texCoordAttributeLocation, // Attribute location
+      2, // Number of elements per attribute
+      glContext.FLOAT, // Typeof attribute
+      glContext.FALSE, // Normalized
+      5 * Float32Array.BYTES_PER_ELEMENT, // Sizeof vertex
+      3 * Float32Array.BYTES_PER_ELEMENT // Offset
+    );
+    glContext.enableVertexAttribArray(this.positionAttributeLocation);
+    glContext.enableVertexAttribArray(this.texCoordAttributeLocation);
+  }
+
+  Render(glContext) {
     glContext.drawElements(glContext.TRIANGLES, 6, glContext.UNSIGNED_SHORT, 0);
 
     glContext.bindBuffer(glContext.ARRAY_BUFFER, null);

@@ -30,13 +30,29 @@ export class SceneManager {
     this.textureLoadList.push(textureName);
   }
 
-  ProcessLogic(glContext, input) {
+  SortImagesForAlphaBlending() {
+    for(var i = 0; i < this.imageList.length; i++) {
+      for(var j = 0; j < this.imageList.length; j++) {
+        if(this.imageList[i].model.posZ < this.imageList[j].model.posZ) {
+          var aux = this.imageList[j];
+          this.imageList[j] = this.imageList[i];
+          this.imageList[i] = aux;
+        }
+      }
+    }
+  }
+
+  ProcessLogic(glContext, input, canvas) {
     // Handle loading of new images
     if(this.textureLoadList.length > 0) {
       var newImage = {};
 
       var newModel = new modelCls.Model();
-      newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length);
+      var image = document.getElementById(this.textureLoadList[0]);
+      var width = image.naturalWidth;
+      var height = image.naturalHeight;
+      newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length, width, height, canvas);
+      newModel.SetPositionZ(-this.imageList.length);
 
       var newTexture = new textureCls.Texture();
       newTexture.Init(glContext, this.textureLoadList[0]);
@@ -46,13 +62,14 @@ export class SceneManager {
       this.imageList.push(newImage);
 
       this.textureLoadList.pop();
+      this.SortImagesForAlphaBlending();
     }
 
     // Handle picking of images
     if(input.IsMouseDown()) {
       if(this.selectedID === -1) {
 
-        var RGBA = this.framebufferPick.ReadPixel(glContext, input.GetMousePositionX(), 480 - input.GetMousePositionY());
+        var RGBA = this.framebufferPick.ReadPixel(glContext, input.GetMousePositionX(), canvas.height - input.GetMousePositionY());
         for(var i = 0; i < this.imageList.length; i++) {
           if(this.imageList[i].model.GetID() === RGBA[0]) {
             this.selectedID = i;
@@ -68,13 +85,13 @@ export class SceneManager {
     if(this.selectedID !== -1) {
       var posX = this.imageList[this.selectedID].model.posX;
       var posY = this.imageList[this.selectedID].model.posY;
-      this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0085));
-      this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0085));
+      this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
+      this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
     }
   }
 
-  DrawScene(glContext, input) {
-    this.ProcessLogic(glContext, input);
+  DrawScene(glContext, input, canvas) {
+    this.ProcessLogic(glContext, input, canvas);
 
     // Draw scene to framebuffer for picking capability
     glContext.clearColor(1.0, 0.0, 0.0, 1.0);
@@ -82,8 +99,11 @@ export class SceneManager {
     this.framebufferPick.SetActive(glContext);
 
     for(var i = 0; i < this.imageList.length; i++) {
+      this.imageList[i].model.BindData(glContext);
+      this.shader.SetActive(glContext);
       this.shader.UpdateUBO(glContext, 1.0, this.imageList[i].model.GetID() / 255.0);
       this.shader.UpdateParams(glContext, this.camera, this.imageList[i].model.GetWorldMatrix());
+      this.imageList[i].texture.SetActive(glContext); // Not needed, but present for warning suppresion.
       this.imageList[i].model.Render(glContext);
     }
 
@@ -97,6 +117,8 @@ export class SceneManager {
     glContext.clear(glContext.COLOR_BUFFER_BIT | glContext.DEPTH_BUFFER_BIT);
 
     for(var i = 0; i < this.imageList.length; i++) {
+      this.imageList[i].model.BindData(glContext);
+      this.shader.SetActive(glContext);
       this.shader.UpdateParams(glContext, this.camera, this.imageList[i].model.GetWorldMatrix());
       this.imageList[i].texture.SetActive(glContext);
       this.imageList[i].model.Render(glContext);

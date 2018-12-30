@@ -1,10 +1,19 @@
-<canvas id="render-surface" width="640" height="480">HTML5 is required for running the editor!</canvas><br/>
-<select [(ngModel)]="selectedPhoto">
-  <option *ngFor="let entry of photoList" [value]="entry.serverThumbFilePath">{{entry.name}}</option>
-</select>
-<button (click)="loadPhotoTexture()">Load</button>
-<img *ngFor="let photo of loadedPhotos" id="{{photo}}" src="{{photo}}" crossorigin="anonymous" (load)="textureLoaded(photo)">
-<img id="testtexture" src="assets/images/logo_small.png">
-<p>
-  editor works!
-</p>
+<div class="container">
+  <div class="row no-float">
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-9">
+      <canvas id="render-surface" style="width: 100%; height: 100%; display: block;">HTML5 is required for running the editor!</canvas><br/>
+    </div>
+    <div class="col-md-2">
+
+        <select [(ngModel)]="selectedPhoto">
+          <option *ngFor="let entry of photoList" [value]="entry.serverFilePath">{{entry.name}}</option>
+        </select>
+        <button (click)="loadPhotoTexture()">Add</button>
+
+    </div>
+  </div>
+</div>
+<img *ngFor="let photo of loadedPhotos" id="{{photo}}" src="{{photo}}" crossorigin="anonymous" (load)="textureLoaded(photo)" width="0" height="0">
