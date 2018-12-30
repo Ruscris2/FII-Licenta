@@ -2,6 +2,7 @@
 
 const resourceMgrCls = require('./resourceManager.js');
 const sceneMgrCls = require('./sceneManager.js');
+const inputCls = require('./input.js');
 
 class Renderer {
   Init() {
@@ -22,6 +23,9 @@ class Renderer {
 
     this.glContext.enable(this.glContext.DEPTH_TEST);
 
+    this.input = new inputCls.Input();
+    this.input.Init(this.canvas);
+
     this.resourceManager = new resourceMgrCls.ResourceManager();
     this.resourceManager.AddResourceToQueue('assets/shaders/vertexShader.glsl');
     this.resourceManager.AddResourceToQueue('assets/shaders/fragmentShader.glsl');
@@ -39,7 +43,11 @@ class Renderer {
   }
 
   RenderLoop() {
-    this.sceneManager.DrawScene(this.glContext);
+    this.sceneManager.DrawScene(this.glContext, this.input);
+
+    // HACK - Prevent sliding while mousedown
+    this.input.relX = 0;
+    this.input.relY = 0;
 
     var rendererContext = this;
     requestAnimationFrame(function() {rendererContext.RenderLoop();});

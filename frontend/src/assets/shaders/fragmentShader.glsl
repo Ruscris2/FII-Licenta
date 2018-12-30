@@ -20,6 +20,6 @@ void main ()
 	}
 	else
 	{
-		color = vec4(ubo.modeExtra, 1.0 - ubo.modeExtra, 0.0, 1.0);
+		color = vec4(ubo.modeExtra, 0.0, 0.0, 1.0);
 	}
 }

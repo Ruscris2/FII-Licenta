@@ -23,7 +23,9 @@ export class Model {
     glm.mat4.identity(this.idenitityMatrix);
   }
 
-  Init(glContext, pipeline) {
+  Init(glContext, pipeline, id) {
+    this.id = id;
+
     this.vertexBuffer = glContext.createBuffer();
     this.indexBuffer = glContext.createBuffer();
 
@@ -107,5 +109,9 @@ export class Model {
 
   GetWorldMatrix() {
     return this.worldMatrix;
+  }
+
+  GetID() {
+    return this.id;
   }
 }
