@@ -1,4 +1,39 @@
-
 .row {
   margin-top: 50px;
+}
+
+.gradient {
+  background: linear-gradient(to right, #c73bd8, #519ae4);
+  margin-top: 0 !important;
+}
+
+h5 {
+  color: ghostwhite;
+  opacity: 75%;
+  padding: 0;
+  text-shadow: 1px 1px 2px black;
+  margin-left: 10px;
+}
+
+.toolbox {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.gallerybox {
+  margin-top: 0 !important;
+}
+
+.selectedtool {
+  border: 1px solid black;
+  padding: 2px;
+  cursor: pointer;
+  margin-right: 3px;
+}
+
+.unselectedtool {
+  border: 1px solid lightgray;
+  padding: 2px;
+  cursor: pointer;
+  margin-right: 3px;
 }

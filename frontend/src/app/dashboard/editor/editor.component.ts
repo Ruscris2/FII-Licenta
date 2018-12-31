@@ -15,6 +15,13 @@ export class EditorComponent implements OnInit {
   public selectedPhoto;
   rendererInstance = null;
 
+  toolbox = [
+    {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
+    {'name':'rotate', 'img':'assets/images/rotate.png', 'selected':false},
+    {'name':'scale', 'img':'assets/images/scale.png', 'selected':false}
+  ];
+  selectedToolIndex = 0;
+
   constructor(private backendService: BackendService, private authService: AuthService) { }
 
   ngOnInit() {
@@ -46,5 +53,20 @@ export class EditorComponent implements OnInit {
   textureLoaded(photo) {
     const sceneManager = this.rendererInstance.GetSceneManager();
     sceneManager.NewTexture(photo);
+  }
+
+  onToolClick(tool) {
+    this.toolbox[this.selectedToolIndex].selected = false;
+
+    for(var i = 0; i < this.toolbox.length; i++) {
+      if(tool.name === this.toolbox[i].name) {
+        this.toolbox[i].selected = true;
+        this.selectedToolIndex = i;
+        break;
+      }
+    }
+
+    const sceneManager = this.rendererInstance.GetSceneManager();
+    sceneManager.ChangeTool(this.selectedToolIndex);
   }
 }

@@ -6,6 +6,7 @@ export class Model {
   constructor() {
     this.posX = this.posY = this.posZ = 0.0;
     this.rotX = this.rotY = this.rotZ = 0.0;
+    this.sclX = this.sclY = this.sclZ = 1.0;
 
     this.idenitityMatrix = new Float32Array(16);
     glm.mat4.identity(this.idenitityMatrix);
@@ -16,18 +17,18 @@ export class Model {
 
     var ssWidth, ssHeight;
     if(width <= canvas.width && height <= canvas.height) {
-      ssWidth = (2.0 * width) / canvas.width;
-      ssHeight = (2.0 * height) / canvas.height;
+      ssWidth = (canvas.widthOrtho * width) / canvas.width;
+      ssHeight = (canvas.heightOrtho * height) / canvas.height;
     }
     else {
       var ratio = width / height;
       if(ratio > 0) {
-        ssWidth = 2.0;
-        ssHeight = 2.0 / ratio;
+        ssWidth = canvas.widthOrtho;
+        ssHeight = canvas.heightOrtho / ratio;
       }
       else {
-        ssWidth = 2.0 / ratio;
-        ssHeight = 2.0;
+        ssWidth = canvas.widthOrtho / ratio;
+        ssHeight = canvas.heightOrtho;
       }
     }
 
@@ -131,14 +132,28 @@ export class Model {
   SetRotationY(y) { this.SetRotation(this.rotX, y, this.rotZ); }
   SetRotationZ(z) { this.SetRotation(this.rotX, this.rotY, z); }
 
+  SetScale(x, y, z) {
+    this.sclX = x;
+    this.sclY = y;
+    this.sclZ = z;
+    this.UpdateWorldMatrix();
+  }
+
+  SetScaleX(x) { this.SetScale(x, this.sclY, this.sclZ); }
+  SetScaleY(y) { this.SetScale(this.sclX, y, this.sclZ); }
+  SetScaleZ(z) { this.SetScale(this.sclX, this.sclY, z); }
+
   UpdateWorldMatrix() {
     var translationVec = glm.vec3.create();
     glm.vec3.set(translationVec, this.posX, this.posY, this.posZ);
+    var scaleVec = glm.vec3.create();
+    glm.vec3.set(scaleVec, this.sclX, this.sclY, this.sclZ);
 
     glm.mat4.translate(this.worldMatrix, this.idenitityMatrix, translationVec);
     glm.mat4.rotate(this.worldMatrix, this.worldMatrix, this.rotZ, [0, 0, 1]);
     glm.mat4.rotate(this.worldMatrix, this.worldMatrix, this.rotY, [0, 1, 0]);
     glm.mat4.rotate(this.worldMatrix, this.worldMatrix, this.rotX, [1, 0, 0]);
+    glm.mat4.scale(this.worldMatrix, this.worldMatrix, scaleVec);
   }
 
   GetWorldMatrix() {

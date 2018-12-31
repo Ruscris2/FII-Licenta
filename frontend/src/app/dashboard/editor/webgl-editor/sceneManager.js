@@ -11,6 +11,7 @@ export class SceneManager {
     this.selectedID = -1;
     this.textureLoadList = [];
     this.imageList = [];
+    this.toolIndex = 0;
   }
 
   Init(glContext, canvas, resourceManager) {
@@ -28,6 +29,10 @@ export class SceneManager {
 
   NewTexture(textureName) {
     this.textureLoadList.push(textureName);
+  }
+
+  ChangeTool(toolIndex) {
+    this.toolIndex = toolIndex;
   }
 
   SortImagesForAlphaBlending() {
@@ -65,7 +70,7 @@ export class SceneManager {
       this.SortImagesForAlphaBlending();
     }
 
-    // Handle picking of images
+    // Handle input based on tool
     if(input.IsMouseDown()) {
       if(this.selectedID === -1) {
 
@@ -83,10 +88,22 @@ export class SceneManager {
     }
 
     if(this.selectedID !== -1) {
-      var posX = this.imageList[this.selectedID].model.posX;
-      var posY = this.imageList[this.selectedID].model.posY;
-      this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
-      this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
+      if(this.toolIndex === 0) {
+        var posX = this.imageList[this.selectedID].model.posX;
+        var posY = this.imageList[this.selectedID].model.posY;
+        this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
+        this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
+      }
+      else if(this.toolIndex === 1){
+        var rotZ = this.imageList[this.selectedID].model.rotZ;
+        this.imageList[this.selectedID].model.SetRotationZ(rotZ + (input.GetMouseRelativeX() * 0.0024));
+      }
+      else if(this.toolIndex === 2){
+        var sclX = this.imageList[this.selectedID].model.sclX;
+        var sclY = this.imageList[this.selectedID].model.sclY
+        this.imageList[this.selectedID].model.SetScaleX(sclX + (input.GetMouseRelativeX() * 0.0024));
+        this.imageList[this.selectedID].model.SetScaleY(sclY + (input.GetMouseRelativeY() * 0.0024));
+      }
     }
   }
 
