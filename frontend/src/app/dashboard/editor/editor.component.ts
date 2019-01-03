@@ -18,7 +18,8 @@ export class EditorComponent implements OnInit {
   toolbox = [
     {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
     {'name':'rotate', 'img':'assets/images/rotate.png', 'selected':false},
-    {'name':'scale', 'img':'assets/images/scale.png', 'selected':false}
+    {'name':'scale', 'img':'assets/images/scale.png', 'selected':false},
+    {'name':'distort', 'img':'assets/images/distort.png', 'selected':false}
   ];
   selectedToolIndex = 0;
 
