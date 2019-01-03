@@ -3,6 +3,7 @@ import Renderer from './webgl-editor/editor-main';
 import SceneManager from './webgl-editor/sceneManager';
 import { BackendService } from '../../backend.service';
 import { AuthService } from '../../auth.service';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-editor',
@@ -12,6 +13,7 @@ import { AuthService } from '../../auth.service';
 export class EditorComponent implements OnInit {
   photoList = [];
   loadedPhotos = [];
+  layerList = [];
   public selectedPhoto;
   rendererInstance = null;
 
@@ -26,12 +28,32 @@ export class EditorComponent implements OnInit {
   constructor(private backendService: BackendService, private authService: AuthService) { }
 
   ngOnInit() {
+    const context = this;
+
     this.authService.redirectInvalidSession();
 
     this.updatePhotoListView();
 
     this.rendererInstance = new Renderer();
     this.rendererInstance.Init();
+    this.rendererInstance.GetSceneManager().MapUpdateLayerListEvent(function (list) {context.updateLayerListEvent(list);});
+  }
+
+  updateLayerListEvent(layerList) {
+    this.layerList = layerList;
+    this.layerList.reverse();
+  }
+
+  onLayerUp(layer) {
+    this.rendererInstance.GetSceneManager().MoveLayer(layer.model.id, true);
+  }
+
+  onLayerDown(layer) {
+    this.rendererInstance.GetSceneManager().MoveLayer(layer.model.id, false);
+  }
+
+  onLayerDelete(layer) {
+    this.rendererInstance.GetSceneManager().DeleteLayer(layer.model.id);
   }
 
   updatePhotoListView() {

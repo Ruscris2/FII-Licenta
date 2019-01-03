@@ -24,7 +24,18 @@
       <div class="d-flex align-items-center p-2 my-1 rounded gradient box-shadow">
         <h5 class="mb-0">Layers</h5>
       </div>
-      <div class="my-3 p-3 bg-white rounded box-shadow flex-grow-1 toolbox">
+      <div class="my-3 p-3 bg-white rounded box-shadow flex-grow-1 layerbox">
+          <div *ngFor="let layer of layerList" class="row layer">
+            <div class="d-flex">
+              <img src="{{layer.layerInfo.textureName}}" width="30px" height="20px">
+              <p>{{layer.layerInfo.name}}</p>
+            </div>
+            <div>
+              <img (click)="onLayerUp(layer)" src="assets/images/up.png" height="20px" class="layerbtn">
+              <img (click)="onLayerDown(layer)" src="assets/images/down.png" height="20px" class="layerbtn">
+              <img (click)="onLayerDelete(layer)" src="assets/images/delete.png" height="20px" class="layerbtn">
+            </div>
+          </div>
       </div>
     </div>
   </div>

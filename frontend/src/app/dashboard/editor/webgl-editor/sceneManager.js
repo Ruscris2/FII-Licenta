@@ -50,6 +50,10 @@ export class SceneManager {
     this.textureLoadList.push(textureName);
   }
 
+  MapUpdateLayerListEvent(updateLayerListEvent) {
+    this.UpdateLayerList = updateLayerListEvent;
+  }
+
   ChangeTool(toolIndex) {
     this.toolIndex = toolIndex;
 
@@ -70,16 +74,53 @@ export class SceneManager {
     }
   }
 
-  SortImagesForAlphaBlending() {
-    for(var i = 4; i < this.imageList.length; i++) {
-      for(var j = 4; j < this.imageList.length; j++) {
-        if(this.imageList[i].model.posZ < this.imageList[j].model.posZ) {
-          var aux = this.imageList[j];
-          this.imageList[j] = this.imageList[i];
-          this.imageList[i] = aux;
-        }
+  MoveLayer(id, directionUp) {
+    var dirToggle;
+    if(directionUp === true) {
+      dirToggle = 1;
+    }
+    else {
+      dirToggle = -1;
+    }
+
+    // Handle first or last layer based on direction
+    if(this.imageList[this.imageList.length-1].model.GetID() === id && dirToggle === 1) {
+      return;
+    }
+    else if(this.imageList[4].model.GetID() === id && dirToggle === -1) {
+      return;
+    }
+
+    // Find the model based on id, and the model to be swapped with
+    var i;
+    for(i = 0; i < this.imageList.length; i++) {
+      if(this.imageList[i].model.GetID() === id) {
+        break;
       }
     }
+
+    // Swap z-order with it's next index
+    var aux = this.imageList[i+dirToggle].model.posZ;
+    this.imageList[i+dirToggle].model.SetPositionZ(this.imageList[i].model.posZ);
+    this.imageList[i].model.SetPositionZ(aux);
+
+    // Swap object order
+    aux = this.imageList[i+dirToggle];
+    this.imageList[i+dirToggle] = this.imageList[i];
+    this.imageList[i] = aux;
+    this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
+  }
+
+  DeleteLayer(id) {
+    var i;
+    for(i = 0; i < this.imageList.length; i++) {
+      if(this.imageList[i].model.GetID() === id) {
+        break;
+      }
+    }
+
+    this.imageList.splice(i, 1);
+    this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
   }
 
   ProcessLogic(glContext, input, canvas) {
@@ -92,22 +133,25 @@ export class SceneManager {
       var width = image.naturalWidth;
       var height = image.naturalHeight;
       newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length, width, height, canvas);
-      newModel.SetPositionZ(-this.imageList.length);
+      newModel.SetPositionZ(-100.0+this.imageList.length);
 
       var newTexture = new textureCls.Texture();
       newTexture.Init(glContext, this.textureLoadList[0]);
 
       newImage.model = newModel;
       newImage.texture = newTexture;
+      newImage.layerInfo = {};
       this.imageList.push(newImage);
 
+      newImage.layerInfo.name = 'Layer ' + (this.imageList.length - 4);
+      newImage.layerInfo.textureName = this.textureLoadList[0];
+
       this.textureLoadList.pop();
-      this.SortImagesForAlphaBlending();
+      this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
     }
 
     // Model picking detection
     if(input.IsMouseDown()) {
-      console.log(input.GetMousePositionX() + ' ' + input.GetMouseRelativeY());
       var RGBA = this.framebufferPick.ReadPixel(glContext, input.GetMousePositionX(), canvas.height - input.GetMousePositionY());
       if (this.selectedID === -1) {
         for (var i = 0; i < this.imageList.length; i++) {

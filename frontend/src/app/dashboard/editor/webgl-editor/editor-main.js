@@ -36,10 +36,11 @@ class Renderer {
 
     var rendererContext = this;
     this.resourceManager.StartResourceFetch(this.resourceManager, function() {rendererContext.LoadFinished();});
+
+    this.sceneManager = new sceneMgrCls.SceneManager();
   }
 
   LoadFinished() {
-    this.sceneManager = new sceneMgrCls.SceneManager();
     this.sceneManager.Init(this.glContext, this.canvas, this.resourceManager);
 
     var rendererContext = this;

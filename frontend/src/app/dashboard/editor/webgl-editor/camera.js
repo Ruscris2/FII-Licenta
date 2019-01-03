@@ -23,12 +23,12 @@ export class Camera {
     glm.mat4.lookAt(this.viewMatrix, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
 
     if(canvas.width > canvas.height) {
-      glm.mat4.ortho(this.projMatrix, -1.0, 1.0, -min, min, 0.1, 100);
+      glm.mat4.ortho(this.projMatrix, -1.0, 1.0, -min, min, 0.1, 200);
       canvas.widthOrtho = 2.0;
       canvas.heightOrtho = 2 * min;
     }
     else {
-      glm.mat4.ortho(this.projMatrix, -min, min, -1.0, 1.0, 0.1, 100);
+      glm.mat4.ortho(this.projMatrix, -min, min, -1.0, 1.0, 0.1, 200);
       canvas.widthOrtho = 2 * min;
       canvas.heightOrtho = 2.0;
     }
