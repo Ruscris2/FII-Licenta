@@ -63,9 +63,9 @@ export class Shader {
     glContext.uniformMatrix4fv(projMatrixLocation, glContext.FALSE, camera.GetProjMatrix());
   }
 
-  UpdateUBO(glContext, mode, modeExtra) {
+  UpdateUBO(glContext, mode, modeExtra, modeExtra2, modeExtra3) {
     glContext.bindBuffer(glContext.UNIFORM_BUFFER, this.uniformBuffer);
-    var data = new Float32Array([mode, modeExtra, 0.0, 0.0]);
+    var data = new Float32Array([mode, modeExtra, modeExtra2, modeExtra3]);
     glContext.bufferSubData(glContext.UNIFORM_BUFFER, 0, data);
     glContext.bindBuffer(glContext.UNIFORM_BUFFER, null);
   }

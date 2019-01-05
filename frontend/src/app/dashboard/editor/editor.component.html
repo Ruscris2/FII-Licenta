@@ -5,7 +5,12 @@
           <h5 class="mb-0">Toolbox</h5>
       </div>
       <div class="my-3 p-3 bg-white rounded box-shadow flex-grow-1 toolbox">
-        <img *ngFor="let tool of toolbox" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        <div class="toolboxRow">
+          <img *ngFor="let tool of toolbox | slice:0:4" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        </div>
+        <div class="toolboxRow">
+          <img *ngFor="let tool of toolbox | slice:4:10" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        </div>
       </div>
     </div>
     <div class="col-md-6">
@@ -40,4 +45,42 @@
     </div>
   </div>
 </div>
+
+<ng-template #colorAdjustmentModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Color Ajustment</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Hue:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="hueValue" (input)="onHSVSliderChange()" type="range" min="0" max="99" class="hsv-slider">
+        </div>
+      </div>
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Saturation:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="saturationValue" (input)="onHSVSliderChange()" type="range" min="0" max="99" class="hsv-slider">
+        </div>
+      </div>
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Brightness:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="brightnessValue" (input)="onHSVSliderChange()" type="range" min="0" max="168" class="hsv-slider">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <p id="info-modal-close">Press ESC to close...</p>
+  </div>
+</ng-template>
+
 <img *ngFor="let photo of loadedPhotos" id="{{photo}}" src="{{photo}}" crossorigin="anonymous" (load)="textureLoaded(photo)" width="0" height="0">

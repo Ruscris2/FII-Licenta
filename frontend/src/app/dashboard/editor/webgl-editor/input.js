@@ -7,6 +7,7 @@ export class Input {
     this.relX = 0;
     this.relY = 0;
     this.isMouseDown = false;
+    this.mouseClicked = false;
   }
 
   Init(canvas) {
@@ -47,10 +48,19 @@ export class Input {
     this.isMouseDown = false;
     this.relX = 0;
     this.relY = 0;
+    this.mouseClicked = true;
   }
 
   IsMouseDown() {
     return this.isMouseDown;
+  }
+
+  WasMouseClicked() {
+    if(this.mouseClicked){
+      this.mouseClicked = false;
+      return true;
+    }
+    return false;
   }
 
   GetMousePositionX() {

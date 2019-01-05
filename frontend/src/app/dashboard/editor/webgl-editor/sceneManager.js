@@ -60,6 +60,9 @@ export class SceneManager {
 
     // First time the distort tool gets selected, set the control quads to each corner of the selected layer
     this.ResetControlQuadsPosition();
+
+    // Reset WasMouseClicked hack
+    this.input.WasMouseClicked();
   }
 
   ResetControlQuadsPosition() {
@@ -146,7 +149,22 @@ export class SceneManager {
     this.ResetControlQuadsPosition();
   }
 
+  AdjustColor(id, hue, saturation, brightness) {
+    var i;
+    for(i = 0; i < this.imageList.length; i++) {
+      if(this.imageList[i].model.GetID() === id) {
+        break;
+      }
+    }
+
+    this.imageList[i].layerInfo.hue = hue;
+    this.imageList[i].layerInfo.saturation = saturation;
+    this.imageList[i].layerInfo.brightness = brightness;
+  }
+
   ProcessLogic(glContext, input, canvas) {
+    this.input = input;
+
     // Handle loading of new images
     if(this.textureLoadList.length > 0) {
       var newImage = {};
@@ -168,6 +186,10 @@ export class SceneManager {
 
       newImage.layerInfo.name = 'Layer ' + (this.imageList.length - 4);
       newImage.layerInfo.textureName = this.textureLoadList[0];
+      newImage.layerInfo.inverted = false;
+      newImage.layerInfo.hue = 0.0;
+      newImage.layerInfo.saturation = 0.99;
+      newImage.layerInfo.brightness = 0.99;
 
       this.textureLoadList.pop();
       this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
@@ -242,6 +264,11 @@ export class SceneManager {
         this.imageList[selectedLayerIndex].model.CornerPosition(glContext, this.imageList[3].model.posX, this.imageList[3].model.posY, 3);
       }
     }
+    else if(this.toolIndex === 4) {
+      if(selectedLayerIndex !== -1 && input.WasMouseClicked()) {
+        this.imageList[selectedLayerIndex].layerInfo.inverted = !this.imageList[selectedLayerIndex].layerInfo.inverted;
+      }
+    }
   }
 
   DrawScene(glContext, input, canvas) {
@@ -261,7 +288,7 @@ export class SceneManager {
       if(i >= 4 || this.toolIndex === 3) {
         this.imageList[i].model.BindData(glContext);
         this.shader.SetActive(glContext);
-        this.shader.UpdateUBO(glContext, 1.0, this.imageList[i].model.GetID() / 255.0);
+        this.shader.UpdateUBO(glContext, 1.0, this.imageList[i].model.GetID() / 255.0, 0.0, 0.0);
         this.shader.UpdateParams(glContext, this.camera, this.imageList[i].model.GetWorldMatrix());
         this.imageList[i].model.Render(glContext);
       }
@@ -273,10 +300,15 @@ export class SceneManager {
     glContext.clearColor(0.7, 0.7, 0.7, 1.0);
     glContext.clear(glContext.COLOR_BUFFER_BIT | glContext.DEPTH_BUFFER_BIT);
 
-    this.shader.UpdateUBO(glContext, 0.0, 0.0);
-
     // First 4 models, which are reserved to the control quads, are drawn only if distort tool is enabled.
     for(var i = 4; i < this.imageList.length; i++) {
+      if(this.imageList[i].layerInfo.inverted) {
+        this.shader.UpdateUBO(glContext, 3.0, this.imageList[i].layerInfo.hue, this.imageList[i].layerInfo.saturation, this.imageList[i].layerInfo.brightness);
+      }
+      else {
+        this.shader.UpdateUBO(glContext, 0.0, this.imageList[i].layerInfo.hue, this.imageList[i].layerInfo.saturation, this.imageList[i].layerInfo.brightness);
+      }
+
       this.imageList[i].model.BindData(glContext);
       this.shader.SetActive(glContext);
       this.shader.UpdateParams(glContext, this.camera, this.imageList[i].model.GetWorldMatrix());
@@ -286,7 +318,7 @@ export class SceneManager {
 
     // Draw the control quads if distort ool is enabled
     this.dummyTexture.SetActive(glContext);
-    this.shader.UpdateUBO(glContext, 2.0, 0.0);
+    this.shader.UpdateUBO(glContext, 2.0, 0.0, 0.0, 0.0);
     if(this.toolIndex === 3) {
       for (var i = 0; i < 4; i++) {
         this.imageList[i].model.BindData(glContext);

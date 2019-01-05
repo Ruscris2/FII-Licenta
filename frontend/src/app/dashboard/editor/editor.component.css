@@ -72,3 +72,18 @@ h5 {
 .layerSelected {
   font-weight: bold;
 }
+
+.toolboxRow {
+  padding-bottom: 8px;
+  padding-top: 8px;
+  border-bottom: 1px solid lightgray;
+}
+
+.hsv-slider {
+  width: 100%;
+}
+
+#info-modal-close {
+  margin: 0;
+  color: grey;
+}

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import Renderer from './webgl-editor/editor-main';
 import SceneManager from './webgl-editor/sceneManager';
 import { BackendService } from '../../backend.service';
 import { AuthService } from '../../auth.service';
-import {Observable} from 'rxjs/Observable';
+import {NgbModal, ModalDismissReasons, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-editor',
@@ -16,17 +16,27 @@ export class EditorComponent implements OnInit {
   layerList = [];
   public selectedPhoto;
   rendererInstance = null;
+  modalCloseResult: string;
+
+  hueValue = 0;
+  saturationValue = 0;
+  brightnessValue = 0;
+
+  @ViewChild('colorAdjustmentModal')
+  private colorAdjustmentModalRef: ElementRef;
 
   toolbox = [
     {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
     {'name':'rotate', 'img':'assets/images/rotate.png', 'selected':false},
     {'name':'scale', 'img':'assets/images/scale.png', 'selected':false},
-    {'name':'distort', 'img':'assets/images/distort.png', 'selected':false}
+    {'name':'distort', 'img':'assets/images/distort.png', 'selected':false},
+    {'name':'invert', 'img':'assets/images/invert.png', 'selected':false},
+    {'name':'hsv', 'img':'assets/images/hsv.png', 'selected':false}
   ];
   selectedToolIndex = 0;
-  selectedLayerIndex = 0;
+  selectedLayerIndex = -1;
 
-  constructor(private backendService: BackendService, private authService: AuthService) { }
+  constructor(private backendService: BackendService, private authService: AuthService, private modalService: NgbModal) { }
 
   ngOnInit() {
     const context = this;
@@ -40,16 +50,41 @@ export class EditorComponent implements OnInit {
     this.rendererInstance.GetSceneManager().MapUpdateLayerListEvent(function (list) {context.updateLayerListEvent(list);});
   }
 
+  openModal(content) {
+    if(this.selectedLayerIndex === -1) {
+      return;
+    }
+
+    // Set the modal sliders to actual layer positions
+    this.hueValue = this.layerList[this.selectedLayerIndex].layerInfo.hue * 100;
+    this.saturationValue = this.layerList[this.selectedLayerIndex].layerInfo.saturation * 100;
+    this.brightnessValue = this.layerList[this.selectedLayerIndex].layerInfo.brightness * 100;
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdrop: false } as any).result.then((result) => {
+      // Modal always gets dismissed
+    }, (reason) => {
+      // Change back to move tool when dismissed from hsv adjustment
+      this.onToolClick(this.toolbox[0]);
+    });
+  }
+
   updateLayerListEvent(layerList) {
     this.layerList = layerList;
     this.layerList.reverse();
 
+    // TODO: this will probably crash when layer list is updated with an empty list
     for(let i = 0; i < this.layerList.length; i++) {
       this.layerList[i].selected = false;
     }
     this.layerList[0].selected = true;
     this.selectedLayerIndex = 0;
     this.rendererInstance.GetSceneManager().SetSelectedLayer(this.layerList[0].model.id);
+  }
+
+  onHSVSliderChange() {
+    this.rendererInstance.GetSceneManager().AdjustColor(this.layerList[this.selectedLayerIndex].model.id,
+      this.hueValue / 100, this.saturationValue / 100, this.brightnessValue / 100);
+    console.log(this.brightnessValue);
   }
 
   onLayerUp(layer) {
@@ -102,7 +137,7 @@ export class EditorComponent implements OnInit {
   onToolClick(tool) {
     this.toolbox[this.selectedToolIndex].selected = false;
 
-    for(var i = 0; i < this.toolbox.length; i++) {
+    for(let i = 0; i < this.toolbox.length; i++) {
       if(tool.name === this.toolbox[i].name) {
         this.toolbox[i].selected = true;
         this.selectedToolIndex = i;
@@ -112,5 +147,9 @@ export class EditorComponent implements OnInit {
 
     const sceneManager = this.rendererInstance.GetSceneManager();
     sceneManager.ChangeTool(this.selectedToolIndex);
+
+    if(this.selectedToolIndex === 5) {
+      this.openModal(this.colorAdjustmentModalRef);
+    }
   }
 }

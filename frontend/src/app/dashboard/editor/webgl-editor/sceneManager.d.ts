@@ -6,4 +6,5 @@ export default class SceneManager {
   MoveLayer(id, directionUp): any;
   DeleteLayer(id): any;
   SetSelectedLayer(id): any;
+  AdjustColor(id, hue, saturation, brightness): any;
 }
