@@ -57,7 +57,9 @@ h5 {
 .layer p {
   margin-left: 10px;
   margin-top: 5px;
+  cursor: pointer;
 }
+
 .layer img {
   margin-left: 5px;
   margin-top: 10px;
@@ -65,4 +67,8 @@ h5 {
 
 .layerbtn {
   cursor: pointer;
+}
+
+.layerSelected {
+  font-weight: bold;
 }

@@ -5,4 +5,5 @@ export default class SceneManager {
   MapUpdateLayerListEvent(updateLayerListEvent): any;
   MoveLayer(id, directionUp): any;
   DeleteLayer(id): any;
+  SetSelectedLayer(id): any;
 }

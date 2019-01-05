@@ -186,6 +186,7 @@ export class Model {
 
     this.ConstructVertexArray();
     this.UpdateVertexBuffer(glContext);
+    this.UpdateWorldVertexPositions();
   }
 
   BindData(glContext) {

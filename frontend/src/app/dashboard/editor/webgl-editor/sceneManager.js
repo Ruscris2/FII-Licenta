@@ -10,6 +10,7 @@ const controlQuadCls = require('./controlQuad.js');
 export class SceneManager {
   constructor() {
     this.selectedID = -1;
+    this.selectedLayer = -1;
     this.textureLoadList = [];
     this.imageList = [];
     this.toolIndex = 0;
@@ -58,19 +59,36 @@ export class SceneManager {
     this.toolIndex = toolIndex;
 
     // First time the distort tool gets selected, set the control quads to each corner of the selected layer
-    // TODO: Actually implement layers
+    this.ResetControlQuadsPosition();
+  }
+
+  ResetControlQuadsPosition() {
     if(this.toolIndex === 3) {
-      this.imageList[0].model.SetPositionX(this.imageList[4].model.topLeftVertex.x);
-      this.imageList[0].model.SetPositionY(this.imageList[4].model.topLeftVertex.y);
+      var selectedLayerIndex;
+      if(this.selectedLayer !== -1) {
+        for (selectedLayerIndex = 0; selectedLayerIndex < this.imageList.length; selectedLayerIndex++) {
+          if (this.imageList[selectedLayerIndex].model.GetID() === this.selectedLayer) {
+            break;
+          }
+        }
+      }
+      else {
+        selectedLayerIndex = -1;
+      }
 
-      this.imageList[1].model.SetPositionX(this.imageList[4].model.topRightVertex.x);
-      this.imageList[1].model.SetPositionY(this.imageList[4].model.topRightVertex.y);
+      if(selectedLayerIndex !== -1) {
+        this.imageList[0].model.SetPositionX(this.imageList[selectedLayerIndex].model.topLeftVertex.x);
+        this.imageList[0].model.SetPositionY(this.imageList[selectedLayerIndex].model.topLeftVertex.y);
 
-      this.imageList[2].model.SetPositionX(this.imageList[4].model.bottomLeftVertex.x);
-      this.imageList[2].model.SetPositionY(this.imageList[4].model.bottomLeftVertex.y);
+        this.imageList[1].model.SetPositionX(this.imageList[selectedLayerIndex].model.topRightVertex.x);
+        this.imageList[1].model.SetPositionY(this.imageList[selectedLayerIndex].model.topRightVertex.y);
 
-      this.imageList[3].model.SetPositionX(this.imageList[4].model.bottomRightVertex.x);
-      this.imageList[3].model.SetPositionY(this.imageList[4].model.bottomRightVertex.y);
+        this.imageList[2].model.SetPositionX(this.imageList[selectedLayerIndex].model.bottomLeftVertex.x);
+        this.imageList[2].model.SetPositionY(this.imageList[selectedLayerIndex].model.bottomLeftVertex.y);
+
+        this.imageList[3].model.SetPositionX(this.imageList[selectedLayerIndex].model.bottomRightVertex.x);
+        this.imageList[3].model.SetPositionY(this.imageList[selectedLayerIndex].model.bottomRightVertex.y);
+      }
     }
   }
 
@@ -123,6 +141,11 @@ export class SceneManager {
     this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
   }
 
+  SetSelectedLayer(id) {
+    this.selectedLayer = id;
+    this.ResetControlQuadsPosition();
+  }
+
   ProcessLogic(glContext, input, canvas) {
     // Handle loading of new images
     if(this.textureLoadList.length > 0) {
@@ -166,44 +189,58 @@ export class SceneManager {
       this.selectedID = -1;
     }
 
+    // Get image index based on layer selection for tool manipulation purposes
+    var selectedLayerIndex;
+    if(this.selectedLayer !== -1) {
+      for (selectedLayerIndex = 0; selectedLayerIndex < this.imageList.length; selectedLayerIndex++) {
+        if (this.imageList[selectedLayerIndex].model.GetID() === this.selectedLayer) {
+          break;
+        }
+      }
+    }
+    else {
+      selectedLayerIndex = -1;
+    }
+
     // Handle input based on tool
     if(this.toolIndex === 0) {
-      if(this.selectedID !== -1) {
-        var posX = this.imageList[this.selectedID].model.posX;
-        var posY = this.imageList[this.selectedID].model.posY;
-        this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
-        this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
+      if(input.IsMouseDown() && selectedLayerIndex !== -1) {
+        var posX = this.imageList[selectedLayerIndex].model.posX;
+        var posY = this.imageList[selectedLayerIndex].model.posY;
+        this.imageList[selectedLayerIndex].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
+        this.imageList[selectedLayerIndex].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
       }
     }
     else if(this.toolIndex === 1){
-      if(this.selectedID !== -1) {
-        var rotZ = this.imageList[this.selectedID].model.rotZ;
-        this.imageList[this.selectedID].model.SetRotationZ(rotZ + (input.GetMouseRelativeX() * 0.0024));
+      if(input.IsMouseDown() && selectedLayerIndex !== -1) {
+        var rotZ = this.imageList[selectedLayerIndex].model.rotZ;
+        this.imageList[selectedLayerIndex].model.SetRotationZ(rotZ + (input.GetMouseRelativeX() * 0.0024));
       }
     }
     else if(this.toolIndex === 2){
-      if(this.selectedID !== -1) {
-        var sclX = this.imageList[this.selectedID].model.sclX;
-        var sclY = this.imageList[this.selectedID].model.sclY;
-        this.imageList[this.selectedID].model.SetScaleX(sclX + (input.GetMouseRelativeX() * 0.0024));
-        this.imageList[this.selectedID].model.SetScaleY(sclY + (input.GetMouseRelativeY() * 0.0024));
+      if(input.IsMouseDown() && selectedLayerIndex !== -1) {
+        var sclX = this.imageList[selectedLayerIndex].model.sclX;
+        var sclY = this.imageList[selectedLayerIndex].model.sclY;
+        this.imageList[selectedLayerIndex].model.SetScaleX(sclX + (input.GetMouseRelativeX() * 0.0024));
+        this.imageList[selectedLayerIndex].model.SetScaleY(sclY + (input.GetMouseRelativeY() * 0.0024));
       }
     }
-    else if(this.toolIndex === 3){
-      // Allow movement of each quad if selected
-      if(this.selectedID !== -1 && this.selectedID < 4) {
-        var posX = this.imageList[this.selectedID].model.posX;
-        var posY = this.imageList[this.selectedID].model.posY;
-        this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
-        this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
-      }
+    else if(this.toolIndex === 3) {
+      if (selectedLayerIndex !== -1) {
+        // Allow movement of each quad if selected
+        if (this.selectedID !== -1 && this.selectedID < 4) {
+          var posX = this.imageList[this.selectedID].model.posX;
+          var posY = this.imageList[this.selectedID].model.posY;
+          this.imageList[this.selectedID].model.SetPositionX(posX + (input.GetMouseRelativeX() * 0.0024));
+          this.imageList[this.selectedID].model.SetPositionY(posY - (input.GetMouseRelativeY() * 0.0042));
+        }
 
-      // Modify the position of each vertex of the selected layer based on the position of the control quad
-      // TODO: Actually implement layers
-      this.imageList[4].model.CornerPosition(glContext, this.imageList[0].model.posX, this.imageList[0].model.posY, 0);
-      this.imageList[4].model.CornerPosition(glContext, this.imageList[1].model.posX, this.imageList[1].model.posY, 1);
-      this.imageList[4].model.CornerPosition(glContext, this.imageList[2].model.posX, this.imageList[2].model.posY, 2);
-      this.imageList[4].model.CornerPosition(glContext, this.imageList[3].model.posX, this.imageList[3].model.posY, 3);
+        // Modify the position of each vertex of the selected layer based on the position of the control quad
+        this.imageList[selectedLayerIndex].model.CornerPosition(glContext, this.imageList[0].model.posX, this.imageList[0].model.posY, 0);
+        this.imageList[selectedLayerIndex].model.CornerPosition(glContext, this.imageList[1].model.posX, this.imageList[1].model.posY, 1);
+        this.imageList[selectedLayerIndex].model.CornerPosition(glContext, this.imageList[2].model.posX, this.imageList[2].model.posY, 2);
+        this.imageList[selectedLayerIndex].model.CornerPosition(glContext, this.imageList[3].model.posX, this.imageList[3].model.posY, 3);
+      }
     }
   }
 

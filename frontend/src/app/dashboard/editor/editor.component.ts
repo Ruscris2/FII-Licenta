@@ -24,6 +24,7 @@ export class EditorComponent implements OnInit {
     {'name':'distort', 'img':'assets/images/distort.png', 'selected':false}
   ];
   selectedToolIndex = 0;
+  selectedLayerIndex = 0;
 
   constructor(private backendService: BackendService, private authService: AuthService) { }
 
@@ -42,6 +43,13 @@ export class EditorComponent implements OnInit {
   updateLayerListEvent(layerList) {
     this.layerList = layerList;
     this.layerList.reverse();
+
+    for(let i = 0; i < this.layerList.length; i++) {
+      this.layerList[i].selected = false;
+    }
+    this.layerList[0].selected = true;
+    this.selectedLayerIndex = 0;
+    this.rendererInstance.GetSceneManager().SetSelectedLayer(this.layerList[0].model.id);
   }
 
   onLayerUp(layer) {
@@ -54,6 +62,19 @@ export class EditorComponent implements OnInit {
 
   onLayerDelete(layer) {
     this.rendererInstance.GetSceneManager().DeleteLayer(layer.model.id);
+  }
+
+  onLayerSelected(layer) {
+    this.layerList[this.selectedLayerIndex].selected = false;
+
+    for(let i = 0; i < this.layerList.length; i++) {
+      if(this.layerList[i].model.id === layer.model.id) {
+        this.layerList[i].selected = true;
+        this.selectedLayerIndex = i;
+        this.rendererInstance.GetSceneManager().SetSelectedLayer(layer.model.id);
+        break;
+      }
+    }
   }
 
   updatePhotoListView() {
