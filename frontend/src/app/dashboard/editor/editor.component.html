@@ -26,8 +26,9 @@
         </select>
         <button (click)="loadPhotoTexture()">Add</button>
       </div>
-      <div class="d-flex align-items-center p-2 my-1 rounded gradient box-shadow">
+      <div class="d-flex align-items-center p-2 my-1 rounded gradient box-shadow layers-header">
         <h5 class="mb-0">Layers</h5>
+        <h5 class="mb-0 add-layer" (click)="onAddNewLayerClick()">+</h5>
       </div>
       <div class="my-3 p-3 bg-white rounded box-shadow flex-grow-1 layerbox">
           <div *ngFor="let layer of layerList" class="row layer">
@@ -48,7 +49,7 @@
 
 <ng-template #colorAdjustmentModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Color Ajustment</h4>
+    <h4 class="modal-title">Color Ajustment</h4>
   </div>
   <div class="modal-body">
     <div class="form-group">
@@ -73,14 +74,81 @@
           <label>Brightness:</label>
         </div>
         <div class="col-md-8">
-          <input [(ngModel)]="brightnessValue" (input)="onHSVSliderChange()" type="range" min="0" max="168" class="hsv-slider">
+          <input [(ngModel)]="brightnessValue" (input)="onHSVSliderChange()" type="range" min="0" max="99" class="hsv-slider">
         </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <p id="info-modal-close">Press ESC to close...</p>
+    <p class="info-modal-close">Press ESC to close...</p>
+  </div>
+</ng-template>
+
+<ng-template #rgbOverlayModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">RGB Overlay</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Red:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="redValue" (input)="onRGBOverlayChange()" type="range" min="0" max="100" class="hsv-slider">
+        </div>
+      </div>
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Green:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="greenValue" (input)="onRGBOverlayChange()" type="range" min="0" max="100" class="hsv-slider">
+        </div>
+      </div>
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Blue:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="blueValue" (input)="onRGBOverlayChange()" type="range" min="0" max="100" class="hsv-slider">
+        </div>
+      </div>
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Enabled:</label>
+        </div>
+        <div class="col-md-8">
+          <input type="checkbox" [(ngModel)]="overlayEnabled" (change)="onRGBOverlayChange()">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <p class="info-modal-close">Press ESC to close...</p>
+  </div>
+</ng-template>
+
+<ng-template #opacityModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Opacity Ajustment</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label>Opacity:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="opacityValue" (input)="onOpacityChange()" type="range" min="0" max="100" class="hsv-slider">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <p class="info-modal-close">Press ESC to close...</p>
   </div>
 </ng-template>
 
 <img *ngFor="let photo of loadedPhotos" id="{{photo}}" src="{{photo}}" crossorigin="anonymous" (load)="textureLoaded(photo)" width="0" height="0">
+<img id="whiteTexture" src="assets/images/white.png" crossorigin="anonymous" width="0" height="0">

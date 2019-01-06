@@ -1,6 +1,14 @@
 "use strict";
 
 export class Shader {
+  constructor() {
+    this.mode = 0.0;
+    this.modeExtra = 0.0;
+    this.modeExtra2 = 0.0;
+    this.modeExtra3 = 0.0;
+    this.opacity = 0.0;
+  }
+
   Init(glContext, resourceManager) {
     var vertexShaderText = resourceManager.GetLoadedResource('assets/shaders/vertexShader.glsl');
     var fragmentShaderText = resourceManager.GetLoadedResource('assets/shaders/fragmentShader.glsl');
@@ -33,7 +41,7 @@ export class Shader {
     }
 
     // Setup uniform buffer
-    var dummyData = new Float32Array(4);
+    var dummyData = new Float32Array(8);
     var uniformLocation = glContext.getUniformBlockIndex(this.pipeline, 'UBO');
     glContext.uniformBlockBinding(this.pipeline, uniformLocation, 0);
 
@@ -64,8 +72,23 @@ export class Shader {
   }
 
   UpdateUBO(glContext, mode, modeExtra, modeExtra2, modeExtra3) {
+    this.mode = mode;
+    this.modeExtra = modeExtra;
+    this.modeExtra2 = modeExtra2;
+    this.modeExtra3 = modeExtra3;
+
+    this.UpdateUBODataStructure(glContext);
+  }
+
+  UpdateOpacityUBO(glContext, opacity) {
+    this.opacity = opacity;
+
+    this.UpdateUBODataStructure(glContext);
+  }
+
+  UpdateUBODataStructure(glContext) {
     glContext.bindBuffer(glContext.UNIFORM_BUFFER, this.uniformBuffer);
-    var data = new Float32Array([mode, modeExtra, modeExtra2, modeExtra3]);
+    var data = new Float32Array([this.mode, this.modeExtra, this.modeExtra2, this.modeExtra3, this.opacity, 0.0, 0.0, 0.0]);
     glContext.bufferSubData(glContext.UNIFORM_BUFFER, 0, data);
     glContext.bindBuffer(glContext.UNIFORM_BUFFER, null);
   }

@@ -16,14 +16,22 @@ export class EditorComponent implements OnInit {
   layerList = [];
   public selectedPhoto;
   rendererInstance = null;
-  modalCloseResult: string;
 
   hueValue = 0;
   saturationValue = 0;
   brightnessValue = 0;
+  redValue = 0;
+  greenValue = 0;
+  blueValue = 0;
+  overlayEnabled = false;
+  opacityValue = 0;
 
   @ViewChild('colorAdjustmentModal')
   private colorAdjustmentModalRef: ElementRef;
+  @ViewChild('rgbOverlayModal')
+  private rgbOverlayModalRef: ElementRef;
+  @ViewChild('opacityModal')
+  private opacityModalRef: ElementRef;
 
   toolbox = [
     {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
@@ -31,7 +39,9 @@ export class EditorComponent implements OnInit {
     {'name':'scale', 'img':'assets/images/scale.png', 'selected':false},
     {'name':'distort', 'img':'assets/images/distort.png', 'selected':false},
     {'name':'invert', 'img':'assets/images/invert.png', 'selected':false},
-    {'name':'hsv', 'img':'assets/images/hsv.png', 'selected':false}
+    {'name':'hsv', 'img':'assets/images/hsv.png', 'selected':false},
+    {'name':'overlay', 'img':'assets/images/overlay.png', 'selected':false},
+    {'name':'opacity', 'img':'assets/images/opacity.png', 'selected':false}
   ];
   selectedToolIndex = 0;
   selectedLayerIndex = -1;
@@ -50,7 +60,7 @@ export class EditorComponent implements OnInit {
     this.rendererInstance.GetSceneManager().MapUpdateLayerListEvent(function (list) {context.updateLayerListEvent(list);});
   }
 
-  openModal(content) {
+  openColorAdjustmentModal() {
     if(this.selectedLayerIndex === -1) {
       return;
     }
@@ -60,7 +70,38 @@ export class EditorComponent implements OnInit {
     this.saturationValue = this.layerList[this.selectedLayerIndex].layerInfo.saturation * 100;
     this.brightnessValue = this.layerList[this.selectedLayerIndex].layerInfo.brightness * 100;
 
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdrop: false } as any).result.then((result) => {
+    this.modalService.open(this.colorAdjustmentModalRef, {ariaLabelledBy:'modal-basic-title', backdrop:false} as any).
+    result.then((result)=>{
+      // Modal always gets dismissed
+    }, (reason) => {
+      // Change back to move tool when dismissed from hsv adjustment
+      this.onToolClick(this.toolbox[0]);
+    });
+  }
+
+  openRGBOverlayModal() {
+    if(this.selectedLayerIndex === -1) {
+      return;
+    }
+
+    this.modalService.open(this.rgbOverlayModalRef, { ariaLabelledBy: 'modal-basic-title', backdrop: false } as any).
+    result.then((result) => {
+      // Modal always gets dismissed
+    }, (reason) => {
+      // Change back to move tool when dismissed from hsv adjustment
+      this.onToolClick(this.toolbox[0]);
+    });
+  }
+
+  openOpacityModal() {
+    if(this.selectedLayerIndex === -1) {
+      return;
+    }
+
+    this.opacityValue = this.layerList[this.selectedLayerIndex].layerInfo.opacity * 100;
+
+    this.modalService.open(this.opacityModalRef, { ariaLabelledBy: 'modal-basic-title', backdrop: false } as any).
+    result.then((result) => {
       // Modal always gets dismissed
     }, (reason) => {
       // Change back to move tool when dismissed from hsv adjustment
@@ -75,6 +116,9 @@ export class EditorComponent implements OnInit {
     // TODO: this will probably crash when layer list is updated with an empty list
     for(let i = 0; i < this.layerList.length; i++) {
       this.layerList[i].selected = false;
+      if(this.layerList[i].layerInfo.textureName === 'whiteTexture') {
+        this.layerList[i].layerInfo.textureName = 'assets/images/white.png';
+      }
     }
     this.layerList[0].selected = true;
     this.selectedLayerIndex = 0;
@@ -84,7 +128,15 @@ export class EditorComponent implements OnInit {
   onHSVSliderChange() {
     this.rendererInstance.GetSceneManager().AdjustColor(this.layerList[this.selectedLayerIndex].model.id,
       this.hueValue / 100, this.saturationValue / 100, this.brightnessValue / 100);
-    console.log(this.brightnessValue);
+  }
+
+  onRGBOverlayChange() {
+    this.rendererInstance.GetSceneManager().AdjustOverlay(this.layerList[this.selectedLayerIndex].model.id, this.overlayEnabled,
+      this.redValue / 100, this.greenValue / 100, this.blueValue / 100);
+  }
+
+  onOpacityChange() {
+    this.rendererInstance.GetSceneManager().AdjustOpacity(this.layerList[this.selectedLayerIndex].model.id, this.opacityValue / 100);
   }
 
   onLayerUp(layer) {
@@ -97,6 +149,10 @@ export class EditorComponent implements OnInit {
 
   onLayerDelete(layer) {
     this.rendererInstance.GetSceneManager().DeleteLayer(layer.model.id);
+  }
+
+  onAddNewLayerClick() {
+    this.rendererInstance.GetSceneManager().AddNewLayer();
   }
 
   onLayerSelected(layer) {
@@ -149,7 +205,27 @@ export class EditorComponent implements OnInit {
     sceneManager.ChangeTool(this.selectedToolIndex);
 
     if(this.selectedToolIndex === 5) {
-      this.openModal(this.colorAdjustmentModalRef);
+      if(this.selectedLayerIndex !== -1) {
+        this.openColorAdjustmentModal();
+      } else {
+        this.onToolClick(this.toolbox[0]);
+      }
+    }
+
+    if(this.selectedToolIndex === 6) {
+      if(this.selectedLayerIndex !== -1) {
+        this.openRGBOverlayModal();
+      } else {
+        this.onToolClick(this.toolbox[0]);
+      }
+    }
+
+    if(this.selectedToolIndex === 7) {
+      if(this.selectedLayerIndex !== -1) {
+        this.openOpacityModal();
+      } else {
+        this.onToolClick(this.toolbox[0]);
+      }
     }
   }
 }

@@ -11,6 +11,7 @@ uniform UBO
 	float modeExtra;
 	float modeExtra2;
 	float modeExtra3;
+	float opacity;
 } ubo;
 
 out vec4 color;
@@ -44,7 +45,7 @@ void main ()
 	colorHSV.x += ubo.modeExtra;
 	colorHSV.yz *= vec2(ubo.modeExtra2, ubo.modeExtra3);
 	colorHSV.xyz = mod(colorHSV.xyz, 1.0);
-	color = vec4(hsv2rgb(colorHSV), color.a);
+	color = vec4(hsv2rgb(colorHSV), clamp(color.a * ubo.opacity, 0.0, 1.0));
 	
 	if(ubo.mode == 1.0)
 	{
@@ -56,6 +57,10 @@ void main ()
 	}
 	else if(ubo.mode == 3.0)
 	{
-		color = vec4(1.0 - color.r, 1.0 - color.g, 1.0 - color.b, color.a);
+		color = vec4(1.0 - color.r, 1.0 - color.g, 1.0 - color.b, clamp(color.a * ubo.opacity, 0.0, 1.0));
+	}
+	else if(ubo.mode == 4.0)
+	{
+		color = vec4(ubo.modeExtra, ubo.modeExtra2, ubo.modeExtra3, clamp(color.a * ubo.opacity, 0.0, 1.0));
 	}
 }

@@ -162,6 +162,35 @@ export class SceneManager {
     this.imageList[i].layerInfo.brightness = brightness;
   }
 
+  AdjustOverlay(id, enabled, r, g, b) {
+    var i;
+    for(i = 0; i < this.imageList.length; i++) {
+      if(this.imageList[i].model.GetID() === id) {
+        break;
+      }
+    }
+
+    this.imageList[i].layerInfo.colorOverlay.enabled = enabled;
+    this.imageList[i].layerInfo.colorOverlay.r = r;
+    this.imageList[i].layerInfo.colorOverlay.g = g;
+    this.imageList[i].layerInfo.colorOverlay.b = b;
+  }
+
+  AdjustOpacity(id, opacity) {
+    var i;
+    for(i = 0; i < this.imageList.length; i++) {
+      if(this.imageList[i].model.GetID() === id) {
+        break;
+      }
+    }
+
+    this.imageList[i].layerInfo.opacity = opacity;
+  }
+
+  AddNewLayer() {
+    this.textureLoadList.push('whiteTexture');
+  }
+
   ProcessLogic(glContext, input, canvas) {
     this.input = input;
 
@@ -182,6 +211,7 @@ export class SceneManager {
       newImage.model = newModel;
       newImage.texture = newTexture;
       newImage.layerInfo = {};
+      newImage.layerInfo.colorOverlay = {};
       this.imageList.push(newImage);
 
       newImage.layerInfo.name = 'Layer ' + (this.imageList.length - 4);
@@ -190,6 +220,11 @@ export class SceneManager {
       newImage.layerInfo.hue = 0.0;
       newImage.layerInfo.saturation = 0.99;
       newImage.layerInfo.brightness = 0.99;
+      newImage.layerInfo.colorOverlay.enabled = false;
+      newImage.layerInfo.colorOverlay.r = 0.0;
+      newImage.layerInfo.colorOverlay.g = 0.0;
+      newImage.layerInfo.colorOverlay.b = 0.0;
+      newImage.layerInfo.opacity = 1.0;
 
       this.textureLoadList.pop();
       this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
@@ -302,12 +337,17 @@ export class SceneManager {
 
     // First 4 models, which are reserved to the control quads, are drawn only if distort tool is enabled.
     for(var i = 4; i < this.imageList.length; i++) {
-      if(this.imageList[i].layerInfo.inverted) {
+      if(this.imageList[i].layerInfo.colorOverlay.enabled) {
+        this.shader.UpdateUBO(glContext, 4.0, this.imageList[i].layerInfo.colorOverlay.r, this.imageList[i].layerInfo.colorOverlay.g, this.imageList[i].layerInfo.colorOverlay.b);
+      }
+      else if(this.imageList[i].layerInfo.inverted) {
         this.shader.UpdateUBO(glContext, 3.0, this.imageList[i].layerInfo.hue, this.imageList[i].layerInfo.saturation, this.imageList[i].layerInfo.brightness);
       }
       else {
         this.shader.UpdateUBO(glContext, 0.0, this.imageList[i].layerInfo.hue, this.imageList[i].layerInfo.saturation, this.imageList[i].layerInfo.brightness);
       }
+
+      this.shader.UpdateOpacityUBO(glContext, this.imageList[i].layerInfo.opacity);
 
       this.imageList[i].model.BindData(glContext);
       this.shader.SetActive(glContext);
@@ -316,7 +356,7 @@ export class SceneManager {
       this.imageList[i].model.Render(glContext);
     }
 
-    // Draw the control quads if distort ool is enabled
+    // Draw the control quads if distort tool is enabled
     this.dummyTexture.SetActive(glContext);
     this.shader.UpdateUBO(glContext, 2.0, 0.0, 0.0, 0.0);
     if(this.toolIndex === 3) {
