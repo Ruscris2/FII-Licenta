@@ -9,8 +9,13 @@ class Renderer {
     console.log('Started initialization of WebGL editor!');
 
     this.canvas = document.getElementById('render-surface');
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
+
+    var devicePixelRatio = window.devicePixelRatio || 1;
+    var width = Math.floor(this.canvas.clientWidth * devicePixelRatio);
+    var height = Math.floor(this.canvas.clientHeight * devicePixelRatio);
+
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.glContext = this.canvas.getContext('webgl2');
 
     if(!this.glContext) {
@@ -55,7 +60,10 @@ class Renderer {
     this.input.relY = 0;
 
     var rendererContext = this;
-    requestAnimationFrame(function() {rendererContext.RenderLoop();});
+    requestAnimationFrame(function() {
+      rendererContext.glContext.viewport(0, 0, rendererContext.glContext.drawingBufferWidth, rendererContext.glContext.drawingBufferHeight);
+      rendererContext.RenderLoop();
+    });
   }
 
   GetSceneManager() {

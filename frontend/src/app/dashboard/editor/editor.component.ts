@@ -25,6 +25,7 @@ export class EditorComponent implements OnInit {
   blueValue = 0;
   overlayEnabled = false;
   opacityValue = 0;
+  helperEnabled = false;
 
   @ViewChild('colorAdjustmentModal')
   private colorAdjustmentModalRef: ElementRef;
@@ -41,7 +42,8 @@ export class EditorComponent implements OnInit {
     {'name':'invert', 'img':'assets/images/invert.png', 'selected':false},
     {'name':'hsv', 'img':'assets/images/hsv.png', 'selected':false},
     {'name':'overlay', 'img':'assets/images/overlay.png', 'selected':false},
-    {'name':'opacity', 'img':'assets/images/opacity.png', 'selected':false}
+    {'name':'opacity', 'img':'assets/images/opacity.png', 'selected':false},
+    {'name':'helpers', 'img':'assets/images/helpers.png', 'selected':false}
   ];
   selectedToolIndex = 0;
   selectedLayerIndex = -1;
@@ -226,6 +228,12 @@ export class EditorComponent implements OnInit {
       } else {
         this.onToolClick(this.toolbox[0]);
       }
+    }
+
+    if(this.selectedToolIndex === 8) {
+      this.helperEnabled = !this.helperEnabled;
+      this.rendererInstance.GetSceneManager().ToggleHelpers(this.helperEnabled);
+      this.onToolClick(this.toolbox[0]);
     }
   }
 }

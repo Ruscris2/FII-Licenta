@@ -9,12 +9,17 @@
           <img *ngFor="let tool of toolbox | slice:0:4" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
         </div>
         <div class="toolboxRow">
-          <img *ngFor="let tool of toolbox | slice:4:10" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+          <img *ngFor="let tool of toolbox | slice:4:8" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        </div>
+        <div class="toolboxRow">
+          <img *ngFor="let tool of toolbox | slice:8:10" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
         </div>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 render-container">
       <canvas id="render-surface" style="width: 100%; height: 100%; display: block;">HTML5 is required for running the editor!</canvas><br/>
+      <div id="render-overlay-container">
+      </div>
     </div>
     <div class="col-md-3 d-flex flex-column">
       <div class="d-flex align-items-center p-2 my-1 rounded gradient box-shadow">

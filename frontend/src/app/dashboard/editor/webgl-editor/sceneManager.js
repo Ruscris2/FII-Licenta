@@ -14,11 +14,12 @@ export class SceneManager {
     this.textureLoadList = [];
     this.imageList = [];
     this.toolIndex = 0;
+    this.helperEnabled = false;
   }
 
   Init(glContext, canvas, resourceManager) {
     this.camera = new cameraCls.Camera();
-    this.camera.Init(canvas);
+    this.camera.Init(glContext, canvas);
 
     this.shader = new shaderCls.Shader();
     this.shader.Init(glContext, resourceManager);
@@ -45,6 +46,22 @@ export class SceneManager {
 
       this.imageList.push(controlQuad);
     }
+
+    // Init text overlay hooks
+    this.overlayContainer = document.getElementById('render-overlay-container');
+
+    // Helper labels
+    this.helpers = [];
+
+    for(var i = 0; i < 4; i++) {
+      this.helpers[i] = {};
+
+      this.helpers[i].view = document.createElement('div');
+      this.helpers[i].view.className = 'overlay-child';
+      this.helpers[i].text = document.createTextNode('');
+      this.helpers[i].view.appendChild(this.helpers[i].text);
+      this.overlayContainer.appendChild(this.helpers[i].view);
+    }
   }
 
   NewTexture(textureName) {
@@ -63,6 +80,10 @@ export class SceneManager {
 
     // Reset WasMouseClicked hack
     this.input.WasMouseClicked();
+  }
+
+  ToggleHelpers(toggle) {
+    this.helperEnabled = toggle;
   }
 
   ResetControlQuadsPosition() {
@@ -232,7 +253,7 @@ export class SceneManager {
 
     // Model picking detection
     if(input.IsMouseDown()) {
-      var RGBA = this.framebufferPick.ReadPixel(glContext, input.GetMousePositionX(), canvas.height - input.GetMousePositionY());
+      var RGBA = this.framebufferPick.ReadPixel(glContext, input.GetMousePositionX(), glContext.drawingBufferHeight - input.GetMousePositionY());
       if (this.selectedID === -1) {
         for (var i = 0; i < this.imageList.length; i++) {
           if (this.imageList[i].model.GetID() === RGBA[0]) {
@@ -302,6 +323,25 @@ export class SceneManager {
     else if(this.toolIndex === 4) {
       if(selectedLayerIndex !== -1 && input.WasMouseClicked()) {
         this.imageList[selectedLayerIndex].layerInfo.inverted = !this.imageList[selectedLayerIndex].layerInfo.inverted;
+      }
+    }
+
+    // Helpers logic
+    if(this.helperEnabled) {
+      if(selectedLayerIndex !== -1) {
+        for(var i = 0; i < 4; i++) {
+          var position = this.imageList[selectedLayerIndex].model.GetClipspaceVertex(glContext, this.camera, canvas, i);
+
+          this.helpers[i].view.style.visibility = 'visible';
+          this.helpers[i].view.style.fontWeight = 'bold';
+          this.helpers[i].view.style.top = Math.floor(position.y) + 'px';
+          this.helpers[i].view.style.left = Math.floor(position.x) + 'px';
+          this.helpers[i].text.nodeValue = '(' + position.x.toFixed(1) + ',' + position.y.toFixed(1) + ')';
+        }
+      }
+    } else {
+      for(var i = 0; i < 4; i++) {
+        this.helpers[i].view.style.visibility = 'hidden';
       }
     }
   }

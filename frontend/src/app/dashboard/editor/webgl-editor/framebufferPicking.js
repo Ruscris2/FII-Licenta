@@ -1,13 +1,13 @@
 "use strict";
 
 export class FramebufferPicking {
-  Init(glContext, canvas) {
+  Init(glContext) {
     this.frameBuffer = glContext.createFramebuffer();
     glContext.bindFramebuffer(glContext.FRAMEBUFFER, this.frameBuffer);
 
     this.textureColor = glContext.createTexture();
     glContext.bindTexture(glContext.TEXTURE_2D, this.textureColor);
-    glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, canvas.width, canvas.height, 0, glContext.RGBA, glContext.UNSIGNED_BYTE, null);
+    glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.drawingBufferWidth, glContext.drawingBufferHeight, 0, glContext.RGBA, glContext.UNSIGNED_BYTE, null);
     glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MIN_FILTER, glContext.LINEAR);
     glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MAG_FILTER, glContext.LINEAR);
     glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_WRAP_S, glContext.CLAMP_TO_EDGE);
@@ -16,7 +16,7 @@ export class FramebufferPicking {
 
     this.textureDepth = glContext.createRenderbuffer();
     glContext.bindRenderbuffer(glContext.RENDERBUFFER, this.textureDepth);
-    glContext.renderbufferStorage(glContext.RENDERBUFFER, glContext.DEPTH_COMPONENT16, canvas.width, canvas.height);
+    glContext.renderbufferStorage(glContext.RENDERBUFFER, glContext.DEPTH_COMPONENT16, glContext.drawingBufferWidth, glContext.drawingBufferHeight);
     glContext.framebufferRenderbuffer(glContext.FRAMEBUFFER, glContext.DEPTH_ATTACHMENT, glContext.RENDERBUFFER, this.textureDepth);
 
     if(glContext.checkFramebufferStatus(glContext.FRAMEBUFFER) !== glContext.FRAMEBUFFER_COMPLETE) {

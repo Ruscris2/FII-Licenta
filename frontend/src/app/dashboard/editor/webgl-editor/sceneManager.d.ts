@@ -10,4 +10,5 @@ export default class SceneManager {
   AdjustOverlay(id, enabled, r, g, b): any;
   AdjustOpacity(id, opacity): any;
   AddNewLayer(): any;
+  ToggleHelpers(toggle): any;
 }

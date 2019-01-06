@@ -28,3 +28,8 @@
 body {
   background: #f8f9fa;
 }
+
+.overlay-child {
+  position: absolute;
+  visibility: hidden;
+}

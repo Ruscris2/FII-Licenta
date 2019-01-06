@@ -290,6 +290,38 @@ export class Model {
     this.bottomRightVertex = {'x':bottomRightVertex[0], 'y':bottomRightVertex[1], 'z':bottomRightVertex[2]};
   }
 
+  GetClipspaceVertex(glContext, camera, canvas, vertexId) {
+    var matrix = glm.mat4.create();
+    glm.mat4.identity(matrix);
+    glm.mat4.multiply(matrix, matrix, camera.GetProjMatrix());
+    glm.mat4.multiply(matrix, matrix, camera.GetViewMatrix());
+    glm.mat4.multiply(matrix, matrix, this.worldMatrix);
+
+    var clipspace = glm.vec4.create();
+    if(vertexId === 0) {
+      glm.vec4.set(clipspace, this.topLeftTriag1.x, this.topLeftTriag1.y, this.topLeftTriag1.z, this.topLeftTriag1.w);
+    }
+    else if(vertexId === 1) {
+      glm.vec4.set(clipspace, this.topRightTriag2.x, this.topRightTriag2.y, this.topRightTriag2.z, this.topRightTriag2.w);
+    }
+    else if(vertexId === 2) {
+      glm.vec4.set(clipspace, this.bottomRightTriag1.x, this.bottomRightTriag1.y, this.bottomRightTriag1.z, this.bottomRightTriag1.w);
+    }
+    else {
+      glm.vec4.set(clipspace, this.bottomLeftTriag1.x, this.bottomLeftTriag1.y, this.bottomLeftTriag1.z, this.bottomLeftTriag1.w);
+    }
+
+    glm.vec4.transformMat4(clipspace, clipspace, matrix);
+
+    clipspace[0] /= clipspace[3];
+    clipspace[1] /= clipspace[3];
+
+    return {
+      'x': (clipspace[0] * 0.5 + 0.5) * canvas.width,
+      'y': (clipspace[1] * -0.5 + 0.5) * canvas.height
+    };
+  }
+
   GetWorldMatrix() {
     return this.worldMatrix;
   }

@@ -3,26 +3,26 @@
 import * as glm from "gl-matrix";
 
 export class Camera {
-  Init(canvas) {
+  Init(glContext, canvas) {
     this.viewMatrix = new Float32Array(16);
     this.projMatrix = new Float32Array(16);
 
     var min;
     var max;
-    if(canvas.width > canvas.height) {
-      min = canvas.height;
-      max = canvas.width;
+    if(glContext.drawingBufferWidth > glContext.drawingBufferHeight) {
+      min = glContext.drawingBufferHeight;
+      max = glContext.drawingBufferWidth;
     }
     else {
-      min = canvas.width;
-      max = canvas.height;
+      min = glContext.drawingBufferWidth;
+      max = glContext.drawingBufferHeight;
     }
 
     min = min / max;
 
     glm.mat4.lookAt(this.viewMatrix, [0, 0, 10], [0, 0, 0], [0, 1, 0]);
 
-    if(canvas.width > canvas.height) {
+    if(glContext.drawingBufferWidth > glContext.drawingBufferHeight) {
       glm.mat4.ortho(this.projMatrix, -1.0, 1.0, -min, min, 0.1, 200);
       canvas.widthOrtho = 2.0;
       canvas.heightOrtho = 2 * min;

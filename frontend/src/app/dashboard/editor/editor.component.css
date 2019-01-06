@@ -7,6 +7,21 @@
   margin-top: 0 !important;
 }
 
+.render-container {
+  position: relative;
+}
+
+#render-overlay-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: none !important;
+  pointer-events: none;
+}
+
 h5 {
   color: ghostwhite;
   opacity: 75%;
