@@ -102,4 +102,30 @@ export class BackendService {
 
     return this.httpClient.post(this.apiAddress + 'photo', json, { headers: headers });
   }
+
+  getSinglePhoto(token: string, id: number) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      id: id
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/single', json, { headers : headers });
+  }
+
+  editSinglePhoto(token: string, id: number, name: string, descr: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      id: id,
+      name: name,
+      description: descr
+    };
+
+    return this.httpClient.put(this.apiAddress + 'photo/single', json, { headers: headers });
+  }
 }

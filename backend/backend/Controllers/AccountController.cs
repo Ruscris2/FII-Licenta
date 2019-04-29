@@ -94,7 +94,8 @@ namespace backend.Controllers
             Account account = _accountRepo.GetByIdentifier(username);
             
             return Ok(new
-            { username = account.Username,
+            { id = account.Id,
+              username = account.Username,
               email = account.Email,
               firstName = account.FirstName,
               lastName = account.LastName,

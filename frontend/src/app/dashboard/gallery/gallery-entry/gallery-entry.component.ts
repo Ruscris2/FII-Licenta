@@ -7,8 +7,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   styleUrls: ['./gallery-entry.component.css'],
   animations: [
     trigger('glowAnim', [
-      state('hidden', style({ 'box-shadow': 'none', 'transform': 'scale(1.0) rotate(0deg)' })),
-      state('visible', style({ 'box-shadow': '0px 0px 20px #0054ff', 'transform': 'scale(1.2) rotate(7deg)'})),
+      state('hidden', style({ 'box-shadow': 'none' })),
+      state('visible', style({ 'box-shadow': '0px 0px 20px #0054ff'})),
       transition('hidden => visible', animate('150ms ease-in')),
       transition('visible => hidden', animate('150ms ease-out'))
     ])

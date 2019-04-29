@@ -12,4 +12,10 @@ namespace backend.Controllers.DTOs
 
         public string NameFilter { get; set; }
     }
+
+    public class PhotoSingleDTO
+    {
+        [Required]
+        public int Id { get; set; }
+    }
 }

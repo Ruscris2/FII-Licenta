@@ -22,6 +22,8 @@ import { UploadComponent } from './dashboard/upload/upload.component';
 import { FileUploadDirective } from './fileupload.directive';
 import { GalleryComponent } from './dashboard/gallery/gallery.component';
 import { GalleryEntryComponent } from './dashboard/gallery/gallery-entry/gallery-entry.component';
+import { PhotoComponent } from './dashboard/photo/photo.component';
+import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
 
 
 @NgModule({
@@ -38,7 +40,9 @@ import { GalleryEntryComponent } from './dashboard/gallery/gallery-entry/gallery
     UploadComponent,
     FileUploadDirective,
     GalleryComponent,
-    GalleryEntryComponent
+    GalleryEntryComponent,
+    PhotoComponent,
+    PhotoeditComponent
   ],
   imports: [
     BrowserModule,

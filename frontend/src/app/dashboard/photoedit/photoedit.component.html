@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="d-flex align-items-center p-3 my-3 rounded gradient box-shadow">
+    <div class=" ml-4">
+      <h5 class="mb-0">Edit photo details</h5>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded box-shadow">
+    <div class="row">
+        <p class="media media-body text-muted small mt-2 mb-0 p-0">Photo name:</p>
+        <div class="media">
+          <input type="text" class="form-control editable-label" value="{{photoName}}" spellcheck="false" [(ngModel)]="photoName">
+        </div>
+    </div>
+    <div class="row">
+      <p class="media media-body text-muted small mt-2 mb-0 p-0">Photo description:</p>
+      <div class="media">
+        <input type="text" class="form-control editable-label" value="{{photoDesc}}" spellcheck="false" [(ngModel)]="photoDesc">
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" type="submit" (click)="onSaveClick()">Save Changes</button>
+      <button class="btn btn-primary" type="submit" [routerLink]="['/photo', this.photo.id]">Cancel</button>
+    </div>
+  </div>
+</div>

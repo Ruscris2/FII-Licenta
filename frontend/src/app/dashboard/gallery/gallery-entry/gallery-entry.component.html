@@ -1,5 +1,5 @@
-<div class="photo_entry">
-  <div class="photo_container" [@glowAnim]="animState" (mouseover)="onHover()" (mouseout)="onHoverEnd()">
+<div class="photo_entry" [@glowAnim]="animState" (mouseover)="onHover()" (mouseout)="onHoverEnd()">
+  <div class="photo_container">
     <img class="photo" src={{thumbnail}}>
   </div>
   <p maxlength="12">{{photoname}}</p>

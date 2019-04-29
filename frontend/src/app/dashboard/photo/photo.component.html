@@ -1,0 +1,18 @@
+<div class="container box-shadow photo_container" (mouseenter)="onPresentationMouseEnter()" (mouseleave)="onPresentationMouseLeave()">
+  <img class="presentation_photo" src="{{photo.serverFilePath}}" [ngClass]="{'header-big':!shrinkHeader, 'header-small':shrinkHeader}">
+</div>
+<div class="container">
+  <div class="row box-shadow info_box">
+    <div *ngIf="ownerOptionsVisible" class="photo_owner_controls">
+      <button class="btn btn-primary" type="submit" [routerLink]="['/photo', photo.id, 'edit']">Edit Photo Details</button>
+    </div>
+    <div class="photo_info">
+      <h4>{{photo.name}}</h4>
+      <small>Uploaded on: {{photo.timeAdded | date:'dd/MM/yyyy @ HH:mm:ss'}}</small>
+      <p class="pl-5 mt-3">{{photo.description}}</p>
+    </div>
+  </div>
+</div>
+
+
+

@@ -16,7 +16,7 @@
 
   <div class="row my-3 p-3 bg-white rounded box-shadow">
     <span *ngFor="let entry of photoList">
-      <app-gallery-entry [thumbnail]=entry.serverThumbFilePath [photoname]=entry.name></app-gallery-entry>
+      <app-gallery-entry [thumbnail]=entry.serverThumbFilePath [photoname]=entry.name [routerLink]="['/photo', entry.id]"></app-gallery-entry>
     </span>
   </div>
 </main>

@@ -61,5 +61,39 @@ namespace backend.Controllers
 
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("single")]
+        public IActionResult GetSinglePhoto([FromBody] PhotoSingleDTO dto)
+        {
+            Photo photo = _photoRepo.GetById(dto.Id);
+            
+            PhotoDTO response = new PhotoDTO();
+            response.Name = photo.Name;
+            response.Description = photo.Description;
+            response.Id = photo.Id;
+            response.OwnerId = photo.OwnerId;
+            response.Rating = photo.Rating;
+            response.ServerFilePath = photo.ServerFilePath;
+            response.TimeAdded = photo.TimeAdded;
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPut]
+        [Route("single")]
+        public async Task<IActionResult> EditSinglePhoto([FromBody] EditPhotoDetailsDTO dto)
+        {
+            Photo photo = _photoRepo.GetById(dto.Id);
+
+            photo.Name = dto.Name;
+            photo.Description = dto.Description;
+
+            await _photoRepo.Update(photo);
+
+            return Ok();
+        }
     }
 }
