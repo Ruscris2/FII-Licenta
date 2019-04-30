@@ -63,6 +63,7 @@ namespace backend
             // Register repositories
             services.AddTransient<IAccountRepo, AccountRepo>();
             services.AddTransient<IPhotoRepo, PhotoRepo>();
+            services.AddTransient<IPhotoRatingRepo, PhotoRatingRepo>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory logger)

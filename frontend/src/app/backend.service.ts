@@ -128,4 +128,17 @@ export class BackendService {
 
     return this.httpClient.put(this.apiAddress + 'photo/single', json, { headers: headers });
   }
+
+  ratePhoto(token: string, photoId: number, value: number) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      photoId: photoId,
+      value: value
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/rate', json, { headers: headers });
+  }
 }

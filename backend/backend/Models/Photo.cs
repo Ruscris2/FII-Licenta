@@ -25,6 +25,7 @@ namespace backend.Models
         public DateTime TimeAdded { get; set; }
 
         public string Description { get; set; }
-        public short Rating { get; set; }
+        public float Rating { get; set; }
+        public int RatingsCount { get; set; }
     }
 }
