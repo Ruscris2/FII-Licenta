@@ -9,6 +9,8 @@ using backend.Repositories;
 using backend.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -20,12 +22,14 @@ namespace backend.Controllers
         private readonly IAccountRepo _accountRepo;
         private readonly IPhotoRepo _photoRepo;
         private readonly IPhotoRatingRepo _photoRatingsRepo;
+        private readonly IPhotoCommentRepo _photoCommentRepo;
 
-        public PhotoController(IAccountRepo accountRepo, IPhotoRepo photoRepo, IPhotoRatingRepo photoRatingRepo)
+        public PhotoController(IAccountRepo accountRepo, IPhotoRepo photoRepo, IPhotoRatingRepo photoRatingRepo, IPhotoCommentRepo photoCommentRepo)
         {
             _accountRepo = accountRepo;
             _photoRepo = photoRepo;
             _photoRatingsRepo = photoRatingRepo;
+            _photoCommentRepo = photoCommentRepo;
         }
 
         [Authorize]
@@ -53,7 +57,7 @@ namespace backend.Controllers
                         photoEntry.RatingsCount = photo.RatingsCount;
                         photoEntry.ServerFilePath = photo.ServerFilePath;
                         photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
-                        photoEntry.TimeAdded = photoEntry.TimeAdded;
+                        photoEntry.TimeAdded = photo.TimeAdded;
                         response.Add(photoEntry);
                     }
                     return Ok(response);
@@ -80,6 +84,7 @@ namespace backend.Controllers
             response.Rating = photo.Rating;
             response.RatingsCount = photo.RatingsCount;
             response.ServerFilePath = photo.ServerFilePath;
+            response.ServerThumbFilePath = photo.ServerThumbFilePath;
             response.TimeAdded = photo.TimeAdded;
 
             return Ok(response);
@@ -140,6 +145,48 @@ namespace backend.Controllers
             await _photoRepo.Update(photo);
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("comment")]
+        public async Task<IActionResult> CommentPhoto([FromBody] CommentPhotoDTO dto)
+        {
+            var username = HttpContext.User.Identity.Name;
+            Account commenterAccount = _accountRepo.GetByIdentifier(username);
+
+            PhotoComment comment = new PhotoComment();
+            comment.PhotoId = dto.PhotoId;
+            comment.AccountId = commenterAccount.Id;
+            comment.Text = dto.Text;
+            comment.TimeAdded = DateTime.Now;
+
+            await _photoCommentRepo.Add(comment);
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("commentlist")]
+        public IActionResult GetCommentsForPhoto([FromBody] CommentListDTO dto)
+        {
+            List<PhotoComment> comments = _photoCommentRepo.GetCommentsForPhoto(dto.PhotoId);
+
+            List<CommentDTO> output = new List<CommentDTO>();
+
+            foreach (var comment in comments)
+            {
+                CommentDTO entry = new CommentDTO();
+
+                entry.Author = _accountRepo.GetById(comment.AccountId).Username;
+                entry.Text = comment.Text;
+                entry.TimeAdded = comment.TimeAdded;
+
+                output.Add(entry);
+            }
+
+            return Ok(output);
         }
     }
 }

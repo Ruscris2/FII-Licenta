@@ -9,6 +9,7 @@ namespace backend
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Photo> Photos { get; set; }
         public DbSet<PhotoRating> PhotoRatings { get; set; }
+        public DbSet<PhotoComment> PhotoComments { get; set; }
 
         public DatabaseContext()
         {

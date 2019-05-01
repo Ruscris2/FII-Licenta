@@ -16,6 +16,10 @@ export class PhotoComponent implements OnInit, OnDestroy {
   shrinkHeader = true;
   ownerOptionsVisible = false;
   displayRatedInfo = false;
+  displayCommentedInfo = false;
+  commentBoxText = '';
+
+  comments = [];
 
   ratingStars = [
     'assets/images/star_empty.png',
@@ -39,6 +43,11 @@ export class PhotoComponent implements OnInit, OnDestroy {
       const id = +params['id'];
 
       this.getPhotoInfoFromBackend(id);
+
+      this.backendService.commentList(this.authService.getToken(), id).subscribe(res => {
+        this.comments = <any>res;
+        window.scroll(0, 0);
+      });
     });
   }
 
@@ -114,10 +123,30 @@ export class PhotoComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.displayRatedInfo = false;
-    }, 500);
+    }, 800);
 
     this.backendService.ratePhoto(this.authService.getToken(), this.photo.id, starId).subscribe(res => {
       this.getPhotoInfoFromBackend(this.photo.id);
     });
+  }
+
+  onCommentClick() {
+    if(this.commentBoxText.length === 0) {
+      alert('Please enter a comment in the text area above!');
+      return;
+    }
+
+    this.displayCommentedInfo = true;
+
+    setTimeout(() => {
+      this.displayCommentedInfo = false;
+    }, 800);
+
+    this.backendService.commentPhoto(this.authService.getToken(), this.photo.id, this.commentBoxText).subscribe(dummy => {
+      this.backendService.commentList(this.authService.getToken(), this.photo.id).subscribe(res => {
+        this.comments = <any>res;
+      });
+    });
+    this.commentBoxText = '';
   }
 }

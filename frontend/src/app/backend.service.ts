@@ -141,4 +141,29 @@ export class BackendService {
 
     return this.httpClient.post(this.apiAddress + 'photo/rate', json, { headers: headers });
   }
+
+  commentPhoto(token: string, photoId: number, text: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      photoId: photoId,
+      text: text
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/comment', json, { headers: headers });
+  }
+
+  commentList(token: string, photoId: number) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      photoId: photoId
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/commentlist', json, { headers: headers });
+  }
 }

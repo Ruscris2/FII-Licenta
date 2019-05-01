@@ -64,6 +64,7 @@ namespace backend
             services.AddTransient<IAccountRepo, AccountRepo>();
             services.AddTransient<IPhotoRepo, PhotoRepo>();
             services.AddTransient<IPhotoRatingRepo, PhotoRatingRepo>();
+            services.AddTransient<IPhotoCommentRepo, PhotoCommentRepo>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory logger)

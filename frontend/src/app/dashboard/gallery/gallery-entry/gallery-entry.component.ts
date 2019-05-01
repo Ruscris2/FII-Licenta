@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import {Time} from '@angular/common';
 
 @Component({
   selector: 'app-gallery-entry',
@@ -19,6 +20,8 @@ export class GalleryEntryComponent implements OnInit {
 
   @Input() thumbnail: string;
   @Input() photoname: string;
+  @Input() rating: any;
+  @Input() timeAdded: string;
 
   constructor() { }
 

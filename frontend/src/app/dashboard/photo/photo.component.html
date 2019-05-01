@@ -23,6 +23,28 @@
       </div>
       <small>Uploaded on: {{photo.timeAdded | date:'dd/MM/yyyy @ HH:mm:ss'}}</small>
       <p class="pl-5 mt-3">{{photo.description}}</p>
+
+      <div class="comment_list row">
+        <p *ngIf="comments.length == 0" class="no_comments_label">No comments available. Be the first to comment!</p>
+        <div *ngFor="let comment of comments" class="comment_entry">
+            <img class="comment_profile_pic" src="assets/images/no_profile_photo.png">
+            <p class="float-right">{{comment.timeAdded  | date:'dd/MM/yyyy @ HH:mm:ss'}}</p>
+            <div class="comment_content row">
+              <p><b>{{comment.author}}</b></p>
+              <br/><br/>
+              <p>{{comment.text}}</p>
+            </div>
+        </div>
+      </div>
+
+      <div class="comment_box row">
+        <small><b>Comment:</b></small><br/>
+        <textarea rows="5" class="comment_textarea" [(ngModel)]="commentBoxText">{{commentBoxText}}</textarea>
+        <div style="display: flex">
+          <button class="btn btn-primary" type="submit" (click)="onCommentClick()">Submit Comment</button>
+          <p *ngIf="displayCommentedInfo" class="rated_info" style="margin-left: 10px; padding-top: 5px">Comment added!</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

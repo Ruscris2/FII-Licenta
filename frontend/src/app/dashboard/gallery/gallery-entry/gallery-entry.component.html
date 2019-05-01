@@ -3,6 +3,6 @@
     <img class="photo" src={{thumbnail}}>
   </div>
   <p maxlength="12">{{photoname}}</p>
-  <p class="info_photo">0/5 rating | 0 comments</p>
-  <p class="info_photo">Added on: 23 Jul 2018</p>
+  <p class="info_photo">{{rating}}/5 rating | 0 comments</p>
+  <p class="info_photo">Added on: {{timeAdded | date:'dd/MM/yyyy @ HH:mm:ss'}}</p>
 </div>

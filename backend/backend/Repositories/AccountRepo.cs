@@ -56,6 +56,11 @@ namespace backend.Repositories
             return Tuple.Create(false, "Username or email already exists!");
         }
 
+        public Account GetById(int id)
+        {
+            return (from acc in dbContext.Accounts where acc.Id == id select acc).FirstOrDefault();
+        }
+
         // Get an account based on it's identifier (username or email)
         public Account GetByIdentifier(string identifier)
         {

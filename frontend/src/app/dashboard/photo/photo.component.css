@@ -20,6 +20,7 @@
   display: block;
   margin-top: 30px;
   padding-top: 10px;
+  margin-bottom: 50px;
 }
 
 .ratingstar {
@@ -55,4 +56,48 @@ p {
 .rated_info {
   color: #a038af;
   padding-right: 5px;
+}
+
+.comment_box {
+  border-top: 1px solid lightgray;
+  display: block;
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-top: 25px;
+  padding-top: 15px;
+}
+
+.comment_list {
+  border-top: 1px solid lightgray;
+  margin-left: 10px;
+  margin-right: 20px;
+  margin-top: 35px;
+  padding-top: 15px;
+}
+
+.comment_textarea {
+  width: 100%;
+}
+
+.no_comments_label {
+  width: 100%;
+  text-align: center;
+  color: darkgray;
+}
+
+.comment_profile_pic {
+  border: 1px solid black;
+  height: 100px;
+  position: absolute;
+}
+
+.comment_entry {
+  height: 100px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.comment_content {
+  margin-left: 120px;
+  display: block;
 }
