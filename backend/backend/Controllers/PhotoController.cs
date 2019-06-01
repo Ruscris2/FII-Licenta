@@ -188,5 +188,57 @@ namespace backend.Controllers
 
             return Ok(output);
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("latest")]
+        public IActionResult GetLatestPhotos()
+        {
+            List<Photo> photos = _photoRepo.GetLatestPhotos();
+
+            List<PhotoDTO> response = new List<PhotoDTO>();
+            foreach (Photo photo in photos)
+            {
+                PhotoDTO photoEntry = new PhotoDTO();
+                photoEntry.Name = photo.Name;
+                photoEntry.Description = photo.Description;
+                photoEntry.Id = photo.Id;
+                photoEntry.OwnerId = photo.OwnerId;
+                photoEntry.Rating = photo.Rating;
+                photoEntry.RatingsCount = photo.RatingsCount;
+                photoEntry.ServerFilePath = photo.ServerFilePath;
+                photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
+                photoEntry.TimeAdded = photo.TimeAdded;
+                response.Add(photoEntry);
+            }
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("mostrated")]
+        public IActionResult GetMostRatedPhotos()
+        {
+            List<Photo> photos = _photoRepo.GetMostRatedPhotos();
+
+            List<PhotoDTO> response = new List<PhotoDTO>();
+            foreach (Photo photo in photos)
+            {
+                PhotoDTO photoEntry = new PhotoDTO();
+                photoEntry.Name = photo.Name;
+                photoEntry.Description = photo.Description;
+                photoEntry.Id = photo.Id;
+                photoEntry.OwnerId = photo.OwnerId;
+                photoEntry.Rating = photo.Rating;
+                photoEntry.RatingsCount = photo.RatingsCount;
+                photoEntry.ServerFilePath = photo.ServerFilePath;
+                photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
+                photoEntry.TimeAdded = photo.TimeAdded;
+                response.Add(photoEntry);
+            }
+
+            return Ok(response);
+        }
     }
 }

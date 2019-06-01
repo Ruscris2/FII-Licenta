@@ -103,6 +103,22 @@ export class BackendService {
     return this.httpClient.post(this.apiAddress + 'photo', json, { headers: headers });
   }
 
+  getLatestPhotos(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'photo/latest', { headers: headers });
+  }
+
+  getMostRatedPhotos(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'photo/mostrated', { headers: headers });
+  }
+
   getSinglePhoto(token: string, id: number) {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')

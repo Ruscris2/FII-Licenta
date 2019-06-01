@@ -1,0 +1,41 @@
+<main role="main" class="container">
+  <div class="row p-3 my-3 gradient box-shadow">
+    <div class="col form-inline">
+      <h5 class="mb-0">Search results</h5>
+    </div>
+  </div>
+  <div class="toolbox row box-shadow">
+    <p class="searchbox_text">Name:</p>
+    <input class="m-2 search_box" spellcheck="false" type="text" value="{{name}}"
+           [(ngModel)]="name">
+    <p class="searchbox_text">Start date:</p>
+    <input class="m-2 search_box" type="date" value="{{startdate}}" [(ngModel)]="startdate">
+    <p class="searchbox_text">End date:</p>
+    <input class="m-2 search_box" type="date" value="{{enddate}}" [(ngModel)]="enddate">
+    <p class="searchbox_text">Min rating:</p>
+    <input class="m-2 search_box" style="width: 40px" type="number" value="{{minrating}}" [(ngModel)]="minrating">
+    <p class="searchbox_text">Max rating:</p>
+    <input class="m-2 search_box" style="width: 40px" type="number" value="{{maxrating}}" [(ngModel)]="maxrating">
+  </div>
+
+  <div class="mt-4 mb-4">
+    <div *ngFor="let entry of photoList" class="row bg-white box-shadow mt-3 mb-3" [@glowAnim]="entry.animState" (mouseover)="onHover(entry)" (mouseout)="onHoverEnd(entry)">
+      <div class="img_container">
+        <img class="contained_img" src="{{entry.serverThumbFilePath}}">
+      </div>
+      <div>
+        <h4 class="mt-2 ml-1 mb-0">{{entry.name}}</h4>
+        <small class="ml-1">by SENSEI</small>
+        <br/>
+        <br/>
+        <br/>
+        <small class="ml-1">Rating: {{entry.rating}}/5</small>
+        <br/>
+        <small class="ml-1">Comments: 0</small>
+      </div>
+      <div class="ml-auto">
+        <p class="mt-2 mr-2">Added on: {{entry.timeAdded | date:'dd/MM/yyyy @ HH:mm:ss'}}</p>
+      </div>
+    </div>
+  </div>
+</main>

@@ -65,6 +65,16 @@ namespace backend.Repositories
             return photoQuery.ToList();
         }
 
+        public List<Photo> GetLatestPhotos()
+        {
+            return (from p in dbContext.Photos orderby p.TimeAdded descending select p).Take(8).ToList();
+        }
+
+        public List<Photo> GetMostRatedPhotos()
+        {
+            return (from p in dbContext.Photos orderby p.Rating descending select p).Take(8).ToList();
+        }
+
         public async Task Update(Photo photo)
         {
             photos.Update(photo);

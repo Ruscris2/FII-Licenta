@@ -24,7 +24,9 @@ import { GalleryComponent } from './dashboard/gallery/gallery.component';
 import { GalleryEntryComponent } from './dashboard/gallery/gallery-entry/gallery-entry.component';
 import { PhotoComponent } from './dashboard/photo/photo.component';
 import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
-
+import { ExploreComponent } from './dashboard/explore/explore.component';
+import { DragScrollModule } from 'ngx-drag-scroll';
+import { FindComponent } from './dashboard/explore/find/find.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
     GalleryComponent,
     GalleryEntryComponent,
     PhotoComponent,
-    PhotoeditComponent
+    PhotoeditComponent,
+    ExploreComponent,
+    FindComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +54,8 @@ import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
     FormsModule,
     HttpClientModule,
     NgbModule.forRoot(),
-    routes
+    routes,
+    DragScrollModule
   ],
   providers: [ BackendService, CookieService, AuthService ],
   bootstrap: [ AppComponent ]

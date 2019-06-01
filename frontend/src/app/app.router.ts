@@ -11,6 +11,8 @@ import { UploadComponent } from './dashboard/upload/upload.component';
 import { GalleryComponent } from './dashboard/gallery/gallery.component';
 import { PhotoComponent } from './dashboard/photo/photo.component';
 import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
+import { ExploreComponent } from './dashboard/explore/explore.component';
+import { FindComponent } from './dashboard/explore/find/find.component';
 
 export const router: Routes = [
   { path: '', component: DashboardComponent, children: [
@@ -20,6 +22,8 @@ export const router: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'upload', component: UploadComponent },
       { path: 'gallery', component: GalleryComponent },
+      { path: 'explore', component: ExploreComponent },
+      { path: 'explore/find/:name/:startdate/:enddate/:minrating/:maxrating', component: FindComponent },
       { path: 'photo/:id', component: PhotoComponent },
       { path: 'photo/:id/edit', component: PhotoeditComponent }
     ]},
