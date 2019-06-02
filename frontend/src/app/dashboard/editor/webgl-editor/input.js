@@ -8,6 +8,10 @@ export class Input {
     this.relY = 0;
     this.isMouseDown = false;
     this.mouseClicked = false;
+    this.keyState = [];
+    for(var i = 0; i < 256; i ++){
+      this.keyState.push(false);
+    }
   }
 
   Init(canvas) {
@@ -27,6 +31,12 @@ export class Input {
     canvas.addEventListener('mousemove', function(e) {
       inputContext.MouseMove(e);
     });
+    document.onkeypress = function(e) {
+      inputContext.KeyDownCallback(e);
+    };
+    document.onkeyup = function(e) {
+      inputContext.KeyUpCallback(e);
+    };
   }
 
   LBMDownCallback(e) {
@@ -42,6 +52,20 @@ export class Input {
 
     this.posX = e.clientX - this.offsetX;
     this.posY = e.clientY - this.offsetY;
+  }
+
+  KeyDownCallback(e) {
+    this.keyState[e.keyCode] = true;
+  }
+
+  KeyUpCallback(e) {
+    for(var i = 0; i < this.keyState.length; i++) {
+      this.keyState[i] = false;
+    }
+  }
+
+  IsKeyDown(key) {
+    return this.keyState[key.charCodeAt(0)];
   }
 
   LBMUpCallback(e) {

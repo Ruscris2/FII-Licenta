@@ -7,6 +7,7 @@ export class Model {
     this.posX = this.posY = this.posZ = 0.0;
     this.rotX = this.rotY = this.rotZ = 0.0;
     this.sclX = this.sclY = this.sclZ = 1.0;
+    this.framebufferId = -1;
 
     this.idenitityMatrix = new Float32Array(16);
     glm.mat4.identity(this.idenitityMatrix);

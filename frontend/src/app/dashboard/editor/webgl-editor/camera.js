@@ -6,6 +6,7 @@ export class Camera {
   Init(glContext, canvas) {
     this.viewMatrix = new Float32Array(16);
     this.projMatrix = new Float32Array(16);
+    this.projMatrixPerspective = new Float32Array(16);
 
     var min;
     var max;
@@ -33,7 +34,7 @@ export class Camera {
       canvas.heightOrtho = 2.0;
     }
 
-    //glm.mat4.perspective(this.projMatrix, glm.glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 100.0);
+    glm.mat4.perspective(this.projMatrixPerspective, glm.glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 100.0);
   }
 
   GetViewMatrix() {
@@ -42,5 +43,9 @@ export class Camera {
 
   GetProjMatrix() {
     return this.projMatrix;
+  }
+
+  GetProjMatrixPerspective() {
+    return this.projMatrixPerspective;
   }
 }

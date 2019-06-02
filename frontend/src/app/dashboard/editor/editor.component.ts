@@ -33,6 +33,8 @@ export class EditorComponent implements OnInit {
   private rgbOverlayModalRef: ElementRef;
   @ViewChild('opacityModal')
   private opacityModalRef: ElementRef;
+  @ViewChild('uploadModel')
+  private uploadModelRedirect: ElementRef;
 
   toolbox = [
     {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
@@ -43,7 +45,9 @@ export class EditorComponent implements OnInit {
     {'name':'hsv', 'img':'assets/images/hsv.png', 'selected':false},
     {'name':'overlay', 'img':'assets/images/overlay.png', 'selected':false},
     {'name':'opacity', 'img':'assets/images/opacity.png', 'selected':false},
-    {'name':'helpers', 'img':'assets/images/helpers.png', 'selected':false}
+    {'name':'helpers', 'img':'assets/images/helpers.png', 'selected':false},
+    {'name':'3dobj', 'img':'assets/images/3dobj.png', 'selected':false},
+    {'name':'objrot', 'img':'assets/images/objrot.png', 'selected':false}
   ];
   selectedToolIndex = 0;
   selectedLayerIndex = -1;
@@ -120,6 +124,8 @@ export class EditorComponent implements OnInit {
       this.layerList[i].selected = false;
       if(this.layerList[i].layerInfo.textureName === 'whiteTexture') {
         this.layerList[i].layerInfo.textureName = 'assets/images/white.png';
+      } else if(this.layerList[i].layerInfo.textureName === 'object3D') {
+        this.layerList[i].layerInfo.textureName = 'assets/images/3dobj.png';
       }
     }
     this.layerList[0].selected = true;
@@ -183,6 +189,18 @@ export class EditorComponent implements OnInit {
     });
   }
 
+  onUploadModelClick() {
+    const file = (<HTMLInputElement>document.getElementById('uploadModel')).files[0];
+
+    const thisClass = this;
+    const reader = new FileReader();
+    reader.onload = function () {
+      thisClass.rendererInstance.GetSceneManager().NewObject3D(reader.result);
+    };
+
+    reader.readAsText(file);
+  }
+
   loadPhotoTexture() {
     this.loadedPhotos.push(this.selectedPhoto);
   }
@@ -233,6 +251,12 @@ export class EditorComponent implements OnInit {
     if(this.selectedToolIndex === 8) {
       this.helperEnabled = !this.helperEnabled;
       this.rendererInstance.GetSceneManager().ToggleHelpers(this.helperEnabled);
+      this.onToolClick(this.toolbox[0]);
+    }
+
+    if(this.selectedToolIndex === 9) {
+      this.uploadModelRedirect.nativeElement.value = '';
+      this.uploadModelRedirect.nativeElement.click();
       this.onToolClick(this.toolbox[0]);
     }
   }

@@ -12,8 +12,12 @@
           <img *ngFor="let tool of toolbox | slice:4:8" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
         </div>
         <div class="toolboxRow">
-          <img *ngFor="let tool of toolbox | slice:8:10" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+          <img *ngFor="let tool of toolbox | slice:8:9" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
         </div>
+        <div class="toolboxRow">
+          <img *ngFor="let tool of toolbox | slice:9:11" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        </div>
+        <input id="uploadModel" type="file" (change)="onUploadModelClick()" #uploadModel>
       </div>
     </div>
     <div class="col-md-6 render-container">

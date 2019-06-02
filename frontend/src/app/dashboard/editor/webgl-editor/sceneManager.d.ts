@@ -11,4 +11,5 @@ export default class SceneManager {
   AdjustOpacity(id, opacity): any;
   AddNewLayer(): any;
   ToggleHelpers(toggle): any;
+  NewObject3D(objData): any;
 }

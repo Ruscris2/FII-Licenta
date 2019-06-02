@@ -6,12 +6,20 @@ const textureCls = require('./texture.js');
 const shaderCls = require('./shader.js');
 const framePickCls = require('./framebufferPicking.js');
 const controlQuadCls = require('./controlQuad.js');
+const object3DCls = require('./object3D');
+const object3DShaderCls = require('./object3DShader');
+const objParserCls = require('wavefront-obj-parser');
+const objExpanderCls = require('expand-vertex-data');
+const object3DFramebufferCls = require('./object3DFramebuffer');
 
 export class SceneManager {
   constructor() {
     this.selectedID = -1;
     this.selectedLayer = -1;
     this.textureLoadList = [];
+    this.object3DLoadList = [];
+    this.object3DFramebuffers = [];
+    this.objects3D = [];
     this.imageList = [];
     this.toolIndex = 0;
     this.helperEnabled = false;
@@ -47,6 +55,10 @@ export class SceneManager {
       this.imageList.push(controlQuad);
     }
 
+    // Init Object3D shader
+    this.object3DShader = new object3DShaderCls.Object3DShader();
+    this.object3DShader.Init(glContext, resourceManager);
+
     // Init text overlay hooks
     this.overlayContainer = document.getElementById('render-overlay-container');
 
@@ -62,6 +74,11 @@ export class SceneManager {
       this.helpers[i].view.appendChild(this.helpers[i].text);
       this.overlayContainer.appendChild(this.helpers[i].view);
     }
+  }
+
+  NewObject3D(objData) {
+    const parsedObj = objParserCls(objData);
+    this.object3DLoadList.push(parsedObj);
   }
 
   NewTexture(textureName) {
@@ -220,14 +237,18 @@ export class SceneManager {
       var newImage = {};
 
       var newModel = new modelCls.Model();
-      var image = document.getElementById(this.textureLoadList[0]);
-      var width = image.naturalWidth;
-      var height = image.naturalHeight;
-      newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length, width, height, canvas);
-      newModel.SetPositionZ(-100.0+this.imageList.length);
-
       var newTexture = new textureCls.Texture();
-      newTexture.Init(glContext, this.textureLoadList[0]);
+      if(this.textureLoadList[0][0] === '~') {
+        newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length, 500, 500, canvas);
+        newModel.framebufferId = parseInt(this.textureLoadList[0][1]);
+      } else {
+        var image = document.getElementById(this.textureLoadList[0]);
+        var width = image.naturalWidth;
+        var height = image.naturalHeight;
+        newModel.Init(glContext, this.shader.GetPipeline(), this.imageList.length, width, height, canvas);
+        newTexture.Init(glContext, this.textureLoadList[0]);
+      }
+      newModel.SetPositionZ(-100.0+this.imageList.length);
 
       newImage.model = newModel;
       newImage.texture = newTexture;
@@ -236,7 +257,10 @@ export class SceneManager {
       this.imageList.push(newImage);
 
       newImage.layerInfo.name = 'Layer ' + (this.imageList.length - 4);
-      newImage.layerInfo.textureName = this.textureLoadList[0];
+      if(this.textureLoadList[0].startsWith('~'))
+        newImage.layerInfo.textureName = 'object3D';
+      else
+        newImage.layerInfo.textureName = this.textureLoadList[0];
       newImage.layerInfo.inverted = false;
       newImage.layerInfo.hue = 0.0;
       newImage.layerInfo.saturation = 0.99;
@@ -249,6 +273,24 @@ export class SceneManager {
 
       this.textureLoadList.pop();
       this.UpdateLayerList(this.imageList.slice(4, this.imageList.length));
+    }
+
+    // Handle loading of new models
+    if(this.object3DLoadList.length > 0) {
+      const objData = objExpanderCls(this.object3DLoadList[0], {facesToTriangles: true});
+
+      this.textureLoadList.push('~' + this.objects3D.length);
+
+      const framebuffer = new object3DFramebufferCls.Object3DFramebuffer();
+      framebuffer.Init(glContext);
+      this.object3DFramebuffers.push(framebuffer);
+
+      const obj3d = new object3DCls.Object3D();
+      obj3d.Init(glContext, this.object3DShader.GetPipeline(), objData);
+      obj3d.SetRotationX(3.14159);
+      this.objects3D.push(obj3d);
+
+      this.object3DLoadList.pop();
     }
 
     // Model picking detection
@@ -325,6 +367,23 @@ export class SceneManager {
         this.imageList[selectedLayerIndex].layerInfo.inverted = !this.imageList[selectedLayerIndex].layerInfo.inverted;
       }
     }
+    else if(this.toolIndex === 10) {
+      if(selectedLayerIndex !== -1 && input.IsMouseDown() && input.IsKeyDown('x')) {
+        var objId = this.imageList[selectedLayerIndex].model.framebufferId;
+        var rotY = this.objects3D[objId].rotY;
+        this.objects3D[objId].SetRotationY(rotY + (input.GetMouseRelativeX() * 0.005));
+      }
+      else if(selectedLayerIndex !== -1 && input.IsMouseDown() && input.IsKeyDown('y')) {
+        var objId = this.imageList[selectedLayerIndex].model.framebufferId;
+        var rotX = this.objects3D[objId].rotX;
+        this.objects3D[objId].SetRotationX(rotX + (input.GetMouseRelativeX() * 0.005));
+      }
+      else if(selectedLayerIndex !== -1 && input.IsMouseDown() && input.IsKeyDown('z')) {
+        var objId = this.imageList[selectedLayerIndex].model.framebufferId;
+        var rotZ = this.objects3D[objId].rotZ;
+        this.objects3D[objId].SetRotationZ(rotZ + (input.GetMouseRelativeX() * 0.005));
+      }
+    }
 
     // Helpers logic
     if(this.helperEnabled) {
@@ -371,6 +430,20 @@ export class SceneManager {
 
     this.framebufferPick.SetInactive(glContext);
 
+    // Draw object 3d framebuffers
+    for(var i = 0; i < this.object3DFramebuffers.length; i++) {
+      glContext.clearColor(0.0, 0.0, 0.0, 0.0);
+      this.object3DFramebuffers[i].Clear(glContext);
+      this.object3DFramebuffers[i].SetActive(glContext);
+
+      this.objects3D[i].BindData(glContext);
+      this.object3DShader.SetActive(glContext);
+      this.object3DShader.UpdateParams(glContext, this.camera, this.objects3D[i].worldMatrix);
+      this.objects3D[i].Render(glContext);
+
+      this.object3DFramebuffers[i].SetInactive(glContext);
+    }
+
     // Draw textured scene for regular viewer
     glContext.clearColor(0.7, 0.7, 0.7, 1.0);
     glContext.clear(glContext.COLOR_BUFFER_BIT | glContext.DEPTH_BUFFER_BIT);
@@ -392,7 +465,12 @@ export class SceneManager {
       this.imageList[i].model.BindData(glContext);
       this.shader.SetActive(glContext);
       this.shader.UpdateParams(glContext, this.camera, this.imageList[i].model.GetWorldMatrix());
-      this.imageList[i].texture.SetActive(glContext);
+
+      if(this.imageList[i].model.framebufferId === -1)
+        this.imageList[i].texture.SetActive(glContext);
+      else
+        glContext.bindTexture(glContext.TEXTURE_2D, this.object3DFramebuffers[this.imageList[i].model.framebufferId].textureColor);
+
       this.imageList[i].model.Render(glContext);
     }
 

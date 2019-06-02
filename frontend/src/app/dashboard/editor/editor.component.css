@@ -22,6 +22,11 @@
   pointer-events: none;
 }
 
+#uploadModel {
+  position: fixed;
+  top: -100em;
+}
+
 h5 {
   color: ghostwhite;
   opacity: 75%;
