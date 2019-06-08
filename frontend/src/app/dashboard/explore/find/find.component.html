@@ -7,25 +7,26 @@
   <div class="toolbox row box-shadow">
     <p class="searchbox_text">Name:</p>
     <input class="m-2 search_box" spellcheck="false" type="text" value="{{name}}"
-           [(ngModel)]="name">
+           [(ngModel)]="name" (change)="updatePhotoListView()">
     <p class="searchbox_text">Start date:</p>
-    <input class="m-2 search_box" type="date" value="{{startdate}}" [(ngModel)]="startdate">
+    <input class="m-2 search_box" type="date" value="{{startdate}}" [(ngModel)]="startdate" (change)="updatePhotoListView()">
     <p class="searchbox_text">End date:</p>
-    <input class="m-2 search_box" type="date" value="{{enddate}}" [(ngModel)]="enddate">
+    <input class="m-2 search_box" type="date" value="{{enddate}}" [(ngModel)]="enddate" (change)="updatePhotoListView()">
     <p class="searchbox_text">Min rating:</p>
-    <input class="m-2 search_box" style="width: 40px" type="number" value="{{minrating}}" [(ngModel)]="minrating">
+    <input class="m-2 search_box" style="width: 40px" type="number" value="{{minrating}}" [(ngModel)]="minrating" (change)="updatePhotoListView()">
     <p class="searchbox_text">Max rating:</p>
-    <input class="m-2 search_box" style="width: 40px" type="number" value="{{maxrating}}" [(ngModel)]="maxrating">
+    <input class="m-2 search_box" style="width: 40px" type="number" value="{{maxrating}}" [(ngModel)]="maxrating" (change)="updatePhotoListView()">
   </div>
 
   <div class="mt-4 mb-4">
-    <div *ngFor="let entry of photoList" class="row bg-white box-shadow mt-3 mb-3" [@glowAnim]="entry.animState" (mouseover)="onHover(entry)" (mouseout)="onHoverEnd(entry)">
+    <div *ngFor="let entry of photoList" class="photo_list_all_item row bg-white box-shadow mt-3 mb-3" [@glowAnim]="entry.animState" (mouseover)="onHover(entry)" (mouseout)="onHoverEnd(entry)"
+      [routerLink]="['/photo/', entry.id]">
       <div class="img_container">
         <img class="contained_img" src="{{entry.serverThumbFilePath}}">
       </div>
       <div>
         <h4 class="mt-2 ml-1 mb-0">{{entry.name}}</h4>
-        <small class="ml-1">by SENSEI</small>
+        <small class="ml-1">by {{entry.authorUsername}}</small>
         <br/>
         <br/>
         <br/>

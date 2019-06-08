@@ -1,6 +1,8 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import DateTimeFormat = Intl.DateTimeFormat;
+import {start} from 'repl';
 
 @Injectable()
 export class BackendService {
@@ -181,5 +183,37 @@ export class BackendService {
     };
 
     return this.httpClient.post(this.apiAddress + 'photo/commentlist', json, { headers: headers });
+  }
+
+  getActivities(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'activity', {headers: headers});
+  }
+
+  getLatestPhoto(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'photo/latestuser', {headers: headers});
+  }
+
+  getAllPhotos(token: string, nameFilter: string, startDate: Date, endDate: Date, minRating: number, maxRating: number) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      nameFilter: nameFilter,
+      startDate: startDate,
+      endDate: endDate,
+      minRating: minRating,
+      maxRating: maxRating
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/all', json, { headers: headers });
   }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import {CookieService} from 'ngx-cookie-service';
 import {Router} from '@angular/router';
 import {BackendService} from './backend.service';
+import {Observable} from 'rxjs/Observable';
 
 @Injectable()
 export class AuthService {
@@ -30,17 +31,30 @@ export class AuthService {
       });
   }
 
-  isLogged(): Promise<boolean> {
-    const sessionCookieExists = this.cookieService.check('sessionId');
-    if(!sessionCookieExists) {
-      return new Promise<boolean>(resolve => resolve(false));
-    }
+  isLogged(): any {
+    const observable = new Observable(res => {
+      let result = true;
 
-    const token = this.cookieService.get('sessionId');
-    this.backendService.pingToken(token).subscribe(res => {
-        return new Promise<boolean>(resolve =>  resolve(true));
-    },
-      error => new Promise<boolean>(resolve =>  resolve(false)));
+      const sessionCookieExists = this.cookieService.check('sessionId');
+      if(!sessionCookieExists) {
+        result = false;
+      }
+
+      if(result === true) {
+        const token = this.cookieService.get('sessionId');
+        this.backendService.pingToken(token).subscribe(res2 => {
+            result = true;
+          },
+          error => {
+            result = false;
+          },
+          () => res.next(result));
+      } else {
+        res.next(false);
+      }
+    });
+
+    return observable;
   }
 
   getToken() {

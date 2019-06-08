@@ -3,7 +3,7 @@ import Renderer from './webgl-editor/editor-main';
 import SceneManager from './webgl-editor/sceneManager';
 import { BackendService } from '../../backend.service';
 import { AuthService } from '../../auth.service';
-import {NgbModal, ModalDismissReasons, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, ModalDismissReasons, NgbModalOptions, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-editor',
@@ -14,6 +14,7 @@ export class EditorComponent implements OnInit {
   photoList = [];
   loadedPhotos = [];
   layerList = [];
+  imageData: any;
   public selectedPhoto;
   rendererInstance = null;
 
@@ -26,6 +27,7 @@ export class EditorComponent implements OnInit {
   overlayEnabled = false;
   opacityValue = 0;
   helperEnabled = false;
+  saveImageName = '';
 
   @ViewChild('colorAdjustmentModal')
   private colorAdjustmentModalRef: ElementRef;
@@ -35,6 +37,8 @@ export class EditorComponent implements OnInit {
   private opacityModalRef: ElementRef;
   @ViewChild('uploadModel')
   private uploadModelRedirect: ElementRef;
+  @ViewChild('saveModal')
+  private saveModalRef: ElementRef;
 
   toolbox = [
     {'name':'move', 'img':'assets/images/cursor.png', 'selected':true},
@@ -47,12 +51,14 @@ export class EditorComponent implements OnInit {
     {'name':'opacity', 'img':'assets/images/opacity.png', 'selected':false},
     {'name':'helpers', 'img':'assets/images/helpers.png', 'selected':false},
     {'name':'3dobj', 'img':'assets/images/3dobj.png', 'selected':false},
-    {'name':'objrot', 'img':'assets/images/objrot.png', 'selected':false}
+    {'name':'objrot', 'img':'assets/images/objrot.png', 'selected':false},
+    {'name':'save', 'img':'assets/images/save.png', 'selected':false}
   ];
   selectedToolIndex = 0;
   selectedLayerIndex = -1;
 
-  constructor(private backendService: BackendService, private authService: AuthService, private modalService: NgbModal) { }
+  constructor(private backendService: BackendService, private authService: AuthService,
+              private modalService: NgbModal, public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     const context = this;
@@ -64,6 +70,8 @@ export class EditorComponent implements OnInit {
     this.rendererInstance = new Renderer();
     this.rendererInstance.Init();
     this.rendererInstance.GetSceneManager().MapUpdateLayerListEvent(function (list) {context.updateLayerListEvent(list);});
+    this.rendererInstance.GetSceneManager().MapChangeToolFunc(function(param) { context.onToolClick(param);});
+    this.rendererInstance.GetSceneManager().MapImageCapturedEvent(function(data) { context.onImageCaptured(data);});
   }
 
   openColorAdjustmentModal() {
@@ -77,10 +85,20 @@ export class EditorComponent implements OnInit {
     this.brightnessValue = this.layerList[this.selectedLayerIndex].layerInfo.brightness * 100;
 
     this.modalService.open(this.colorAdjustmentModalRef, {ariaLabelledBy:'modal-basic-title', backdrop:false} as any).
-    result.then((result)=>{
+    result.then((result)=> {
       // Modal always gets dismissed
     }, (reason) => {
       // Change back to move tool when dismissed from hsv adjustment
+      this.onToolClick(this.toolbox[0]);
+    });
+  }
+
+  openSaveImageModal() {
+    this.modalService.open(this.saveModalRef,{ariaLabelledBy:'modal-basic-title', backdrop:false} as any).
+    result.then((result)=> {
+      // Modal always gets dismissed
+    }, (reason) => {
+      // Change back to move tool when dismissed from save
       this.onToolClick(this.toolbox[0]);
     });
   }
@@ -203,6 +221,34 @@ export class EditorComponent implements OnInit {
 
   loadPhotoTexture() {
     this.loadedPhotos.push(this.selectedPhoto);
+  }
+
+  onSaveImageClick() {
+    if(this.saveImageName.length === 0) {
+      alert('You must enter a new for the image!');
+      return;
+    }
+
+    this.backendService.uploadRequest(this.authService.getToken()).subscribe(res => {
+      const fileUploadJson: any = {};
+      fileUploadJson.key = (<any>res).key;
+      fileUploadJson.user = this.authService.getUsername();
+      fileUploadJson.files = [];
+      fileUploadJson.files.push({filename: this.saveImageName, data: this.imageData});
+
+      this.backendService.uploadFiles(fileUploadJson).subscribe(res2 => {
+          alert('Upload success!');
+        },
+        error => {
+          alert('Upload error!');
+        });
+      this.activeModal.close();
+    });
+  }
+
+  onImageCaptured(data) {
+    this.imageData = data;
+    this.openSaveImageModal();
   }
 
   textureLoaded(photo) {

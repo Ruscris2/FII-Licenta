@@ -16,7 +16,7 @@ class Renderer {
 
     this.canvas.width = width;
     this.canvas.height = height;
-    this.glContext = this.canvas.getContext('webgl2');
+    this.glContext = this.canvas.getContext('webgl2', {preserveDrawingBuffer:true});
 
     if(!this.glContext) {
       console.log('Switching to experimental WebGL...');

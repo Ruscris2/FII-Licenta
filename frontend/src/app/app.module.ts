@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { routes } from './app.router';
 import { BackendService } from './backend.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -57,7 +57,7 @@ import { FindComponent } from './dashboard/explore/find/find.component';
     routes,
     DragScrollModule
   ],
-  providers: [ BackendService, CookieService, AuthService ],
+  providers: [ BackendService, CookieService, AuthService, NgbActiveModal ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

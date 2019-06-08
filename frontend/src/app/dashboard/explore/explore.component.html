@@ -7,7 +7,7 @@
 
   <drag-scroll scrollbar-hidden="true" scroll-x-wheel-enabled="true" drag-scroll-y-disabled="true" class="drag_style" #latestAdded>
     <div *ngFor="let image of latestImages" class="drag_item" drag-scroll-item>
-      <p class="info_item">Added by: SENSEI</p>
+      <p class="info_item">Added by: {{image.authorUsername}}</p>
       <img class="image_item_component" src="{{image.serverFilePath}}" />
     </div>
   </drag-scroll>
@@ -70,7 +70,7 @@
 
   <drag-scroll scrollbar-hidden="true" scroll-x-wheel-enabled="true" drag-scroll-y-disabled="true" class="drag_style" #latestAdded>
     <div *ngFor="let image of mostRatedImages" class="drag_item" drag-scroll-item>
-      <p class="info_item">Added by: SENSEI</p>
+      <p class="info_item">Added by: {{image.authorUsername}}</p>
       <img class="image_item_component" src="{{image.serverFilePath}}" />
     </div>
   </drag-scroll>

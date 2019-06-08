@@ -19,6 +19,35 @@
       </div>
     </div>
   </div>
+  <div *ngIf="isLogged" class="row mt-4">
+    <div class="col-md-3">
+      <div class="quick_links box-shadow">
+        <div class="quick_actions_title">
+          <p>Quick actions</p>
+        </div>
+        <p class="quick_action_item" (click)="openSearchModal()">Quick search</p>
+        <p class="quick_action_item" [routerLink]="['/photo/', latestPhotoId]">My latest photo</p>
+        <p class="quick_action_item">Featured photo</p>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="activity_box box-shadow bg-white">
+        <h4 class="activity_feed_header">Activity feed</h4>
+        <div class="activity_container ml-5 mr-5">
+          <div *ngFor="let activity of activities" [@activityItemAnim]="activity.animState" class="activity_feed_item row ml-2 mr-2">
+            <div class="img_container">
+            <img class="activ_img" src={{activity.targetPhotoThumb}}>
+            </div>
+            <div>
+              <small class="pl-3">At {{activity.timeAdded | date:'dd/MM/yyyy HH:mm'}}:</small><br/>
+              <small *ngIf="activity.type==='comment'" class="pl-4"><b>{{activity.author}}</b> has added a comment to your photo: <a [routerLink]="['/photo', activity.targetPhotoId]">{{activity.targetPhotoName}}</a></small>
+              <small *ngIf="activity.type==='rating'" class="pl-4"><b>{{activity.author}}</b> has rated your photo: <a [routerLink]="['/photo', activity.targetPhotoId]">{{activity.targetPhotoName}}</a></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div *ngIf="!isLogged" class="row">
     <img src="assets/images/bubble.png" class="small_bubble">
@@ -28,3 +57,25 @@
     <p class="welcome_msg_2">Login or Register to begin your journey!</p>
   </div>
 </main>
+
+<ng-template #searchModal let-modal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Search images</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label class="mt-1">Name:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="searchName" type="text" style="height: 35px">
+          <button class="btn btn-primary" [routerLink]="['/explore/find', searchName, '2019-01-01', '2019-12-24', 0, 5]" (click)="d('Meh')">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <p class="info-modal-close">Press ESC to dismiss...</p>
+  </div>
+</ng-template>

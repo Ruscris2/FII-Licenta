@@ -48,3 +48,8 @@ h5 {
   height: 100%;
   object-fit: contain;
 }
+
+.photo_list_all_item {
+  user-select: none;
+  cursor: pointer;
+}

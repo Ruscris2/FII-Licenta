@@ -58,12 +58,46 @@ namespace backend.Controllers
                         photoEntry.ServerFilePath = photo.ServerFilePath;
                         photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                         photoEntry.TimeAdded = photo.TimeAdded;
+                        photoEntry.AuthorUsername = username;
                         response.Add(photoEntry);
                     }
                     return Ok(response);
                 }
                 else
                     ModelState.AddModelError("", "Photo owner doesn't exist!");
+            }
+
+            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("all")]
+        public IActionResult GetAllPhotos([FromBody] PhotoSearchDTO dto)
+        {
+            if (ModelState.IsValid)
+            {
+                List<Photo> photos = _photoRepo.GetAllPhotos(dto.NameFilter, dto.StartDate, dto.EndDate, dto.MinRating,
+                    dto.MaxRating);
+
+                List<PhotoDTO> response = new List<PhotoDTO>();
+                foreach (Photo photo in photos)
+                {
+                    PhotoDTO photoEntity = new PhotoDTO();
+                    photoEntity.Name = photo.Name;
+                    photoEntity.Description = photo.Description;
+                    photoEntity.Id = photo.Id;
+                    photoEntity.OwnerId = photo.OwnerId;
+                    photoEntity.Rating = photo.Rating;
+                    photoEntity.RatingsCount = photo.RatingsCount;
+                    photoEntity.ServerFilePath = photo.ServerFilePath;
+                    photoEntity.ServerThumbFilePath = photo.ServerThumbFilePath;
+                    photoEntity.TimeAdded = photo.TimeAdded;
+                    photoEntity.AuthorUsername = _accountRepo.GetById(photo.OwnerId).Username;
+                    response.Add(photoEntity);
+                }
+
+                return Ok(response);
             }
 
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
@@ -86,6 +120,7 @@ namespace backend.Controllers
             response.ServerFilePath = photo.ServerFilePath;
             response.ServerThumbFilePath = photo.ServerThumbFilePath;
             response.TimeAdded = photo.TimeAdded;
+            response.AuthorUsername = _accountRepo.GetById(photo.OwnerId).Username;
 
             return Ok(response);
         }
@@ -103,6 +138,22 @@ namespace backend.Controllers
             await _photoRepo.Update(photo);
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("latestuser")]
+        public IActionResult GetLatestPhotoOfUser()
+        {
+            var username = HttpContext.User.Identity.Name;
+            Account account = _accountRepo.GetByIdentifier(username);
+
+            Photo photo = _photoRepo.LatestPhotoOfUser(account.Id);
+
+            if (photo != null)
+                return Ok(new {Id = photo.Id});
+            
+            return Ok(new {Id = -1});
         }
 
         [Authorize]
@@ -127,6 +178,7 @@ namespace backend.Controllers
                 rating.AccountId = raterAccount.Id;
                 rating.PhotoId = dto.PhotoId;
                 rating.Value = dto.Value;
+                rating.TimeAdded = DateTime.Now;
                 await _photoRatingsRepo.Add(rating);
             }
             
@@ -209,6 +261,7 @@ namespace backend.Controllers
                 photoEntry.ServerFilePath = photo.ServerFilePath;
                 photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                 photoEntry.TimeAdded = photo.TimeAdded;
+                photoEntry.AuthorUsername = _accountRepo.GetById(photo.OwnerId).Username;
                 response.Add(photoEntry);
             }
 
@@ -235,6 +288,7 @@ namespace backend.Controllers
                 photoEntry.ServerFilePath = photo.ServerFilePath;
                 photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                 photoEntry.TimeAdded = photo.TimeAdded;
+                photoEntry.AuthorUsername = _accountRepo.GetById(photo.OwnerId).Username;
                 response.Add(photoEntry);
             }
 

@@ -18,5 +18,8 @@ namespace backend.Models
 
         [Required]
         public int Value { get; set; }
+
+        [Required]
+        public DateTime TimeAdded { get; set; }
     }
 }

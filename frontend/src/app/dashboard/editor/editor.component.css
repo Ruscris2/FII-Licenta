@@ -27,6 +27,10 @@
   top: -100em;
 }
 
+.saveInput {
+  height: 35px;
+}
+
 h5 {
   color: ghostwhite;
   opacity: 75%;

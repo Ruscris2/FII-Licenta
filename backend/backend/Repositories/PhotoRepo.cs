@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Cryptography;
 using backend.Repositories.Interfaces;
 
 namespace backend.Repositories
@@ -45,6 +46,16 @@ namespace backend.Repositories
             return photo;
         }
 
+        public Photo LatestPhotoOfUser(int ownerId)
+        {
+            Photo photo = (from p in dbContext.Photos
+                where p.OwnerId == ownerId
+                orderby p.TimeAdded descending
+                select p).FirstOrDefault();
+
+            return photo;
+        }
+
         public List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage, string nameFilter)
         {
             IQueryable<Photo> photoQuery;
@@ -73,6 +84,30 @@ namespace backend.Repositories
         public List<Photo> GetMostRatedPhotos()
         {
             return (from p in dbContext.Photos orderby p.Rating descending select p).Take(8).ToList();
+        }
+
+        public List<Photo> GetAllPhotos(string nameFilter, DateTime startDate, DateTime endDate, int minRating, int maxRating)
+        {
+            List<Photo> output;
+
+            if (nameFilter == "")
+            {
+                output = (from p in dbContext.Photos
+                    where p.TimeAdded >= startDate && p.TimeAdded <= endDate && p.Rating >= minRating
+                          && p.Rating <= maxRating
+                    orderby p.TimeAdded descending
+                    select p).ToList();
+            }
+            else
+            {
+                output = (from p in dbContext.Photos
+                    where p.TimeAdded >= startDate && p.TimeAdded <= endDate && p.Rating >= minRating
+                          && p.Rating <= maxRating && p.Name.Contains(nameFilter)
+                    orderby p.TimeAdded descending
+                    select p).ToList();
+            }
+
+            return output;
         }
 
         public async Task Update(Photo photo)

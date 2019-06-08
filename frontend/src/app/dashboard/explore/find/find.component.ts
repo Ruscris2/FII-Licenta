@@ -41,17 +41,9 @@ export class FindComponent implements OnInit {
   }
 
   updatePhotoListView() {
-    this.backendService.getPhotoList(this.authService.getToken(), 1, 50, '').subscribe(res => {
-      this.photoList = <any>res;
-
-      // Process the list
-      for(let i = 0; i < this.photoList.length; i++) {
-        if(this.photoList[i].name.length > 23) {
-          this.photoList[i].name = this.photoList[i].name.substr(0, 18) + '(...)';
-          this.photoList[i].animState = 'hidden';
-        }
-      }
-
+    this.backendService.getAllPhotos(this.authService.getToken(), this.name, new Date(this.startdate), new Date(this.enddate),
+      this.minrating, this.maxrating).subscribe(res => {
+        this.photoList = <any>res;
     });
   }
 

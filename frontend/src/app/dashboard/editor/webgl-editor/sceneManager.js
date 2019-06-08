@@ -89,6 +89,14 @@ export class SceneManager {
     this.UpdateLayerList = updateLayerListEvent;
   }
 
+  MapChangeToolFunc(changeToolFunc) {
+    this.changeToolFunc = changeToolFunc;
+  }
+
+  MapImageCapturedEvent(imageCapturedEvent) {
+    this.imageCapturedEvent = imageCapturedEvent;
+  }
+
   ChangeTool(toolIndex) {
     this.toolIndex = toolIndex;
 
@@ -383,6 +391,11 @@ export class SceneManager {
         var rotZ = this.objects3D[objId].rotZ;
         this.objects3D[objId].SetRotationZ(rotZ + (input.GetMouseRelativeX() * 0.005));
       }
+    }
+    else if(this.toolIndex === 11) {
+      var image = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, "");
+      this.imageCapturedEvent(image);
+      this.changeToolFunc({'name':'move', 'img':'assets/images/cursor.png', 'selected':true});
     }
 
     // Helpers logic

@@ -17,6 +17,9 @@
         <div class="toolboxRow">
           <img *ngFor="let tool of toolbox | slice:9:11" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
         </div>
+        <div class="toolboxRow">
+          <img *ngFor="let tool of toolbox | slice:11:12" src="{{tool.img}}" width="32" height="32" [ngClass]="{'selectedtool':tool.selected, 'unselectedtool':!tool.selected}" (click)="onToolClick(tool)">
+        </div>
         <input id="uploadModel" type="file" (change)="onUploadModelClick()" #uploadModel>
       </div>
     </div>
@@ -156,6 +159,28 @@
   </div>
   <div class="modal-footer">
     <p class="info-modal-close">Press ESC to close...</p>
+  </div>
+</ng-template>
+
+<ng-template #saveModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Save image</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="row toolbox">
+        <div class="col-md-4">
+          <label class="mt-1">Name:</label>
+        </div>
+        <div class="col-md-8">
+          <input [(ngModel)]="saveImageName" type="text" class="saveInput">
+          <button class="btn btn-primary" (click)="onSaveImageClick()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <p class="info-modal-close">Press ESC to cancel...</p>
   </div>
 </ng-template>
 
