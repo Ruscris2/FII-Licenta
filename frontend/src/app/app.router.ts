@@ -13,6 +13,7 @@ import { PhotoComponent } from './dashboard/photo/photo.component';
 import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
 import { ExploreComponent } from './dashboard/explore/explore.component';
 import { FindComponent } from './dashboard/explore/find/find.component';
+import { NewuploadsComponent } from './dashboard/newuploads/newuploads.component';
 
 export const router: Routes = [
   { path: '', component: DashboardComponent, children: [
@@ -25,7 +26,8 @@ export const router: Routes = [
       { path: 'explore', component: ExploreComponent },
       { path: 'explore/find/:name/:startdate/:enddate/:minrating/:maxrating', component: FindComponent },
       { path: 'photo/:id', component: PhotoComponent },
-      { path: 'photo/:id/edit', component: PhotoeditComponent }
+      { path: 'photo/:id/edit', component: PhotoeditComponent },
+      { path: 'newuploads', component: NewuploadsComponent }
     ]},
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent }

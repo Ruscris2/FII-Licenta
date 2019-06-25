@@ -60,6 +60,7 @@ namespace backend.Controllers
                         photo.Name = file.filename;
                         photo.ServerFilePath = file.filepath;
                         photo.ServerThumbFilePath = file.thumbfilepath;
+                        photo.FaceData = file.facedata;
                         photo.OwnerId = account.Id;
                         photo.TimeAdded = DateTime.Now;
 
@@ -73,6 +74,10 @@ namespace backend.Controllers
                             break;
                         }
                     }
+
+                    // Update the number of latest photos uploaded
+                    account.LatestUploadCount = dto.files.Count;
+                    await _accountRepo.Update(account);
 
                     if(operationStatus)
                         return Ok();

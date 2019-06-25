@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService } from '../../backend.service';
 import { AuthService } from '../../auth.service';
@@ -9,6 +9,7 @@ import { AuthService } from '../../auth.service';
   styleUrls: ['./photo.component.css']
 })
 export class PhotoComponent implements OnInit, OnDestroy {
+  @ViewChild('displayImage') displayImage: ElementRef;
 
   paramsSubscription: any;
   photo: any;
@@ -18,8 +19,8 @@ export class PhotoComponent implements OnInit, OnDestroy {
   displayRatedInfo = false;
   displayCommentedInfo = false;
   commentBoxText = '';
-
   comments = [];
+  faces = [];
 
   ratingStars = [
     'assets/images/star_empty.png',
@@ -65,6 +66,35 @@ export class PhotoComponent implements OnInit, OnDestroy {
         }
 
         this.setupStarsFromRating(this.photo.rating);
+
+        const faceArguments = this.photo.faceData.split(';');
+        const faceTags = this.photo.faceTags.split(';');
+        const facesCount = Math.floor(faceArguments.length / 4);
+
+        let seed = 2;
+        for(let i = 0; i < facesCount; i++) {
+          const randomR = Math.sin(seed++) * 10000;
+          const randomG = Math.sin(seed++) * 10000;
+          const randomB = Math.sin(seed++) * 10000;
+
+          const face = {
+            x: faceArguments[i*4],
+            y: faceArguments[i*4+1],
+            width: faceArguments[i*4+2],
+            height: faceArguments[i*4+3],
+            viewLeft: 0,
+            viewTop: 0,
+            viewWidth: 0,
+            viewHeight: 0,
+            visible: 'hidden',
+            r: (Math.floor(randomR) % 255),
+            g: (Math.floor(randomG) % 255),
+            b: (Math.floor(randomB) % 255),
+            tag: faceTags[i]
+          };
+
+          this.faces.push(face);
+        }
       });
     });
   }
@@ -73,12 +103,40 @@ export class PhotoComponent implements OnInit, OnDestroy {
     this.paramsSubscription.unsubscribe();
   }
 
-  onPresentationMouseEnter() {
+  onPresentationMouseEnter(event) {
     this.shrinkHeader = false;
+
+    setTimeout(() => {
+      for(let i = 0; i < this.faces.length; i++) {
+        const leftWeight = (this.displayImage.nativeElement.width / this.displayImage.nativeElement.naturalWidth);
+        const topWeight = (this.displayImage.nativeElement.height / this.displayImage.nativeElement.naturalHeight);
+
+        this.faces[i].viewLeft = event.srcElement.offsetLeft + (this.faces[i].x * leftWeight);
+        this.faces[i].viewTop = event.srcElement.offsetTop + (this.faces[i].y * topWeight);
+        this.faces[i].viewWidth = this.faces[i].width * leftWeight;
+        this.faces[i].viewHeight = this.faces[i].height * topWeight;
+
+        this.faces[i].visible = 'visible';
+      }
+    }, 100);
+  }
+
+  onTagTextChanged() {
+      let tags = '';
+      for (let i = 0; i < this.faces.length; i++) {
+        tags += this.faces[i].tag + ';';
+      }
+
+      this.backendService.updatePhotoTags(this.authService.getToken(), this.photo.id, tags).subscribe(res => {
+      });
   }
 
   onPresentationMouseLeave() {
     this.shrinkHeader = true;
+
+    for(let i = 0; i < this.faces.length; i++) {
+      this.faces[i].visible = 'hidden';
+    }
   }
 
   onHoverStar(starId) {

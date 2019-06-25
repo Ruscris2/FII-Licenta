@@ -46,14 +46,14 @@ namespace backend.Repositories
             return photo;
         }
 
-        public Photo LatestPhotoOfUser(int ownerId)
+        public List<Photo> LatestPhotosOfUser(int ownerId, int count)
         {
-            Photo photo = (from p in dbContext.Photos
+            List<Photo> photos = (from p in dbContext.Photos
                 where p.OwnerId == ownerId
                 orderby p.TimeAdded descending
-                select p).FirstOrDefault();
+                select p).Take(count).ToList();
 
-            return photo;
+            return photos;
         }
 
         public List<Photo> GetPhotoList(int ownerId, int page, int entriesPerPage, string nameFilter)

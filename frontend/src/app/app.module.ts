@@ -27,6 +27,7 @@ import { PhotoeditComponent } from './dashboard/photoedit/photoedit.component';
 import { ExploreComponent } from './dashboard/explore/explore.component';
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { FindComponent } from './dashboard/explore/find/find.component';
+import { NewuploadsComponent } from './dashboard/newuploads/newuploads.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { FindComponent } from './dashboard/explore/find/find.component';
     PhotoComponent,
     PhotoeditComponent,
     ExploreComponent,
-    FindComponent
+    FindComponent,
+    NewuploadsComponent
   ],
   imports: [
     BrowserModule,

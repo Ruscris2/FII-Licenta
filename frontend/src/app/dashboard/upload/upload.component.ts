@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../../backend.service';
 import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-upload',
@@ -12,7 +13,7 @@ export class UploadComponent implements OnInit {
   fileList = [];
   fileUploadJson: any = {};
 
-  constructor(private backendService: BackendService, private authService: AuthService) { }
+  constructor(private backendService: BackendService, private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.authService.redirectInvalidSession();
@@ -71,7 +72,7 @@ export class UploadComponent implements OnInit {
     // If all files are in binary form in JSON, send to API
     if(this.fileUploadJson.files.length === this.fileList.length) {
       this.backendService.uploadFiles(this.fileUploadJson).subscribe(res => {
-        alert('Upload success!');
+        this.router.navigateByUrl('/newuploads');
       },
         error => {
         alert('Upload error!');

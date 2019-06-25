@@ -16,6 +16,7 @@ uniform UBO
 
 out vec4 color;
 
+// SURSA COD FUNCTII RGB2HSV SI HSV2RGB - https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl
 vec3 rgb2hsv(vec3 v)
 {
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);

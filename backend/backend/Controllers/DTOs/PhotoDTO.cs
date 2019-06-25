@@ -14,5 +14,7 @@ namespace backend.Controllers.DTOs
         public float Rating { get; set; }
         public int RatingsCount { get; set; }
         public string AuthorUsername { get; set; }
+        public string FaceData { get; set; }
+        public string FaceTags { get; set; }
     }
 }

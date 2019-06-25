@@ -123,3 +123,16 @@ h5 {
   padding-right: 4px;
   text-shadow: none;
 }
+
+td {
+  border: 1px solid black;
+  width: 20px;
+  height: 20px;
+  margin: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+table {
+  border-collapse: separate;
+}

@@ -27,5 +27,7 @@ namespace backend.Models
         public string Description { get; set; }
         public float Rating { get; set; }
         public int RatingsCount { get; set; }
+        public string FaceData { get; set; }
+        public string FaceTags { get; set; }
     }
 }

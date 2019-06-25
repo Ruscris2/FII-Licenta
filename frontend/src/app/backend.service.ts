@@ -216,4 +216,27 @@ export class BackendService {
 
     return this.httpClient.post(this.apiAddress + 'photo/all', json, { headers: headers });
   }
+
+  updatePhotoTags(token: string, photoId: number, tags: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    const json = {
+      photoId: photoId,
+      tags: tags
+    };
+
+    return this.httpClient.post(this.apiAddress + 'photo/updatetags', json, { headers: headers });
+  }
+
+  getNewlyUploaded(token: string) {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + token);
+
+    return this.httpClient.get(this.apiAddress + 'photo/newlyuploaded', {headers: headers});
+  }
+
+
 }

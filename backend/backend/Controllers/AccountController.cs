@@ -38,6 +38,7 @@ namespace backend.Controllers
                 newAccount.Country = dto.Country;
                 newAccount.City = dto.City;
                 newAccount.ZipCode = dto.ZipCode;
+                newAccount.LatestUploadCount = 0;
 
 
                 // Attempt to create a new account
@@ -102,7 +103,8 @@ namespace backend.Controllers
               address = account.Address,
               country = account.Country,
               city = account.City,
-              zipcode = account.ZipCode
+              zipcode = account.ZipCode,
+              latestUploadCount = account.LatestUploadCount
             });
         }
     }

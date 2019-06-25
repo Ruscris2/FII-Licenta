@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using fileserver.Controllers.DTO;
@@ -98,12 +99,45 @@ namespace fileserver.Controllers
                 originalImage.Close();
                 thumbnailImage.Close();
 
+                // Execute the face detection algorithm on the original image
+                using(StreamWriter sw = new StreamWriter("output.data"))
+                    sw.WriteLine("");
+                
+                Process process = new Process();
+                ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                processStartInfo.CreateNoWindow = true;
+                processStartInfo.FileName = "cmd.exe";
+                processStartInfo.RedirectStandardInput = true;
+                processStartInfo.RedirectStandardOutput = true;
+                processStartInfo.UseShellExecute = false;
+                process.StartInfo = processStartInfo;
+                process.Start();
+
+                process.StandardInput.WriteLine("python  .\\face_detect.py data/" + dto.user + "/" + nameHash + ".png");
+                process.StandardInput.Flush();
+                process.StandardInput.Close();
+
+                process.WaitForExit();
+
+                string faceData = System.IO.File.ReadAllText("output.data");
+                string[] faceDataSplit = faceData.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                string jsonFaceData = "";
+                if (faceDataSplit.Length == 1)
+                    jsonFaceData = faceDataSplit[0];
+                else if(faceDataSplit.Length > 1)
+                {
+                    jsonFaceData = faceDataSplit[0];
+                    for (int j = 1; j < faceDataSplit.Length; j++)
+                        jsonFaceData += ";" + faceDataSplit[j];
+                }
+
                 // Add a entry for the response DTO that will be transmited to the API
                 UploadedFileInfo fileInfo = new UploadedFileInfo();
                 fileInfo.filename = dto.files[i].filename;
                 fileInfo.filepath = "http://localhost:5001/filerequest/?filename=" + dto.user + "/" + nameHash + ".png";
                 fileInfo.thumbfilepath = "http://localhost:5001/filerequest/?filename=" + dto.user + "/thumbs/" +
                                          nameHash + ".png";
+                fileInfo.facedata = jsonFaceData;
                 responseDto.files.Add(fileInfo);
             }
 

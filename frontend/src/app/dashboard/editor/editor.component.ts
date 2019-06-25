@@ -57,6 +57,29 @@ export class EditorComponent implements OnInit {
   selectedToolIndex = 0;
   selectedLayerIndex = -1;
 
+  rgbColors = [
+    {r: 0, g: 0, b: 0},
+    {r: 255, g: 255, b: 255},
+    {r: 255, g: 0, b: 0},
+    {r: 255, g: 63, b: 63},
+    {r: 255, g: 114, b: 63},
+    {r: 255, g: 200, b: 63},
+    {r: 168, g: 255, b: 63},
+    {r: 0, g: 255, b: 0},
+    {r: 63, g: 255, b: 69},
+    {r: 63, g: 255, b: 168},
+    {r: 63, g: 255, b: 255},
+    {r: 63, g: 155, b: 255},
+    {r: 0, g: 0, b: 255},
+    {r: 168, g: 63, b: 255},
+    {r: 255, g: 63, b: 242},
+    {r: 140, g: 58, b: 18},
+    {r: 132, g: 17, b: 61},
+    {r: 17, g: 96, b: 92},
+    {r: 86, g: 96, b: 17},
+    {r: 122, g: 122, b: 122}
+  ];
+
   constructor(private backendService: BackendService, private authService: AuthService,
               private modalService: NgbModal, public activeModal: NgbActiveModal) { }
 
@@ -72,6 +95,14 @@ export class EditorComponent implements OnInit {
     this.rendererInstance.GetSceneManager().MapUpdateLayerListEvent(function (list) {context.updateLayerListEvent(list);});
     this.rendererInstance.GetSceneManager().MapChangeToolFunc(function(param) { context.onToolClick(param);});
     this.rendererInstance.GetSceneManager().MapImageCapturedEvent(function(data) { context.onImageCaptured(data);});
+  }
+
+  onColorTableClick(color) {
+    this.overlayEnabled = true;
+    this.redValue = (color.r / 255) * 100;
+    this.greenValue = (color.g / 255) * 100;
+    this.blueValue = (color.b / 255) * 100;
+    this.onRGBOverlayChange();
   }
 
   openColorAdjustmentModal() {

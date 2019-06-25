@@ -1,5 +1,8 @@
-<div class="container box-shadow photo_container" (mouseenter)="onPresentationMouseEnter()" (mouseleave)="onPresentationMouseLeave()">
-  <img class="presentation_photo" src="{{photo.serverFilePath}}" [ngClass]="{'header-big':!shrinkHeader, 'header-small':shrinkHeader}">
+<div class="container box-shadow photo_container">
+    <img #displayImage class="presentation_photo" src="{{photo.serverFilePath}}" [ngClass]="{'header-big':!shrinkHeader, 'header-small':shrinkHeader}" (mouseenter)="onPresentationMouseEnter($event)" (mouseleave)="onPresentationMouseLeave()">
+    <div *ngFor="let face of faces" class="face_container" [style.left]="face.viewLeft + 'px'" [style.top]="face.viewTop + 'px'" [style.width]="face.viewWidth + 'px'" [style.height]="face.viewHeight + 'px'" [style.visibility]="face.visible" [style.border-color]="'rgb(' + face.r + ',' + face.g + ',' + face.b + ')'">
+      <small class="face_desc" [style.color]="'rgb(' + face.r + ',' + face.g + ',' + face.b + ')'"><b>{{face.tag}}</b></small>
+    </div>
 </div>
 <div class="container">
   <div class="row box-shadow info_box">
@@ -23,6 +26,10 @@
       </div>
       <small>Uploaded on: {{photo.timeAdded | date:'dd/MM/yyyy @ HH:mm:ss'}}</small>
       <p class="pl-5 mt-3">{{photo.description}}</p>
+
+      <div *ngIf="faces.length > 0" class="tag_list row">
+        <input *ngFor="let face of faces" type="text" class="tag_item" (change)="onTagTextChanged()" spellcheck="false" value="{{face.tag}}" [(ngModel)]="face.tag" [style.background-color]="'rgba(' + face.r + ',' + face.g + ',' + face.b + ', 0.3)'">
+      </div>
 
       <div class="comment_list row">
         <p *ngIf="comments.length == 0" class="no_comments_label">No comments available. Be the first to comment!</p>

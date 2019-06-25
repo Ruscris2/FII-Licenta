@@ -1,0 +1,18 @@
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-12" style="text-align: center; margin-top: 20px">
+    <h2>Your photos have been uploaded!</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1 ctrl_btn" (click)="leftClick()"><p>&#8810;</p></div>
+    <div class="col-md-10">
+      <drag-scroll scrollbar-hidden="true" scroll-x-wheel-enabled="true" drag-scroll-y-disabled="true" class="drag_style" #uploadScroll>
+        <div *ngFor="let image of latestUploads" class="drag_item" drag-scroll-item [routerLink]="['/photo/', image.id]">
+          <img class="image_item_component" src="{{image.serverFilePath}}" />
+        </div>
+      </drag-scroll>
+    </div>
+    <div class="col-md-1 ctrl_btn" (click)="rightClick()"><p>&#8811;</p></div>
+  </div>
+</main>

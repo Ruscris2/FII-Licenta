@@ -134,6 +134,16 @@
           <input type="checkbox" [(ngModel)]="overlayEnabled" (change)="onRGBOverlayChange()">
         </div>
       </div>
+      <div class="row toolbox">
+        <table class="ml-3">
+          <tr>
+            <td *ngFor="let color of rgbColors | slice:0:10" [style.background-color]="'rgb(' + color.r + ',' + color.g + ',' + color.b + ')'" (click)="onColorTableClick(color)"></td>
+          </tr>
+          <tr>
+            <td *ngFor="let color of rgbColors | slice:10:20" [style.background-color]="'rgb(' + color.r + ',' + color.g + ',' + color.b + ')'" (click)="onColorTableClick(color)"></td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
@@ -162,7 +172,7 @@
   </div>
 </ng-template>
 
-<ng-template #saveModal let-modal>
+<ng-template #saveModal let-modal let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">Save image</h4>
   </div>
@@ -174,7 +184,7 @@
         </div>
         <div class="col-md-8">
           <input [(ngModel)]="saveImageName" type="text" class="saveInput">
-          <button class="btn btn-primary" (click)="onSaveImageClick()">Save</button>
+          <button class="btn btn-primary" (click)="onSaveImageClick(); d('Meh')">Save</button>
         </div>
       </div>
     </div>

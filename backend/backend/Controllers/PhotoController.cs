@@ -55,6 +55,8 @@ namespace backend.Controllers
                         photoEntry.OwnerId = photo.OwnerId;
                         photoEntry.Rating = photo.Rating;
                         photoEntry.RatingsCount = photo.RatingsCount;
+                        photoEntry.FaceData = photo.FaceData;
+                        photoEntry.FaceTags = photo.FaceTags;
                         photoEntry.ServerFilePath = photo.ServerFilePath;
                         photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                         photoEntry.TimeAdded = photo.TimeAdded;
@@ -90,6 +92,8 @@ namespace backend.Controllers
                     photoEntity.OwnerId = photo.OwnerId;
                     photoEntity.Rating = photo.Rating;
                     photoEntity.RatingsCount = photo.RatingsCount;
+                    photoEntity.FaceData = photo.FaceData;
+                    photoEntity.FaceTags = photo.FaceTags;
                     photoEntity.ServerFilePath = photo.ServerFilePath;
                     photoEntity.ServerThumbFilePath = photo.ServerThumbFilePath;
                     photoEntity.TimeAdded = photo.TimeAdded;
@@ -117,6 +121,8 @@ namespace backend.Controllers
             response.OwnerId = photo.OwnerId;
             response.Rating = photo.Rating;
             response.RatingsCount = photo.RatingsCount;
+            response.FaceData = photo.FaceData;
+            response.FaceTags = photo.FaceTags;
             response.ServerFilePath = photo.ServerFilePath;
             response.ServerThumbFilePath = photo.ServerThumbFilePath;
             response.TimeAdded = photo.TimeAdded;
@@ -148,12 +154,42 @@ namespace backend.Controllers
             var username = HttpContext.User.Identity.Name;
             Account account = _accountRepo.GetByIdentifier(username);
 
-            Photo photo = _photoRepo.LatestPhotoOfUser(account.Id);
+            List<Photo> photo = _photoRepo.LatestPhotosOfUser(account.Id, 1);
 
             if (photo != null)
-                return Ok(new {Id = photo.Id});
+                return Ok(new {Id = photo[0].Id});
             
             return Ok(new {Id = -1});
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("newlyuploaded")]
+        public IActionResult GetNewlyUploadedPhotos()
+        {
+            var username = HttpContext.User.Identity.Name;
+            Account account = _accountRepo.GetByIdentifier(username);
+
+            List<Photo> photos = _photoRepo.LatestPhotosOfUser(account.Id, account.LatestUploadCount);
+            List<PhotoDTO> response = new List<PhotoDTO>();
+            foreach (Photo photo in photos)
+            {
+                PhotoDTO photoEntry = new PhotoDTO();
+                photoEntry.Name = photo.Name;
+                photoEntry.Description = photo.Description;
+                photoEntry.Id = photo.Id;
+                photoEntry.OwnerId = photo.OwnerId;
+                photoEntry.Rating = photo.Rating;
+                photoEntry.RatingsCount = photo.RatingsCount;
+                photoEntry.FaceData = photo.FaceData;
+                photoEntry.FaceTags = photo.FaceTags;
+                photoEntry.ServerFilePath = photo.ServerFilePath;
+                photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
+                photoEntry.TimeAdded = photo.TimeAdded;
+                photoEntry.AuthorUsername = _accountRepo.GetById(photo.OwnerId).Username;
+                response.Add(photoEntry);
+            }
+            return Ok(response);
         }
 
         [Authorize]
@@ -258,6 +294,8 @@ namespace backend.Controllers
                 photoEntry.OwnerId = photo.OwnerId;
                 photoEntry.Rating = photo.Rating;
                 photoEntry.RatingsCount = photo.RatingsCount;
+                photoEntry.FaceData = photo.FaceData;
+                photoEntry.FaceTags = photo.FaceTags;
                 photoEntry.ServerFilePath = photo.ServerFilePath;
                 photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                 photoEntry.TimeAdded = photo.TimeAdded;
@@ -285,6 +323,8 @@ namespace backend.Controllers
                 photoEntry.OwnerId = photo.OwnerId;
                 photoEntry.Rating = photo.Rating;
                 photoEntry.RatingsCount = photo.RatingsCount;
+                photoEntry.FaceData = photo.FaceData;
+                photoEntry.FaceTags = photo.FaceTags;
                 photoEntry.ServerFilePath = photo.ServerFilePath;
                 photoEntry.ServerThumbFilePath = photo.ServerThumbFilePath;
                 photoEntry.TimeAdded = photo.TimeAdded;
@@ -293,6 +333,18 @@ namespace backend.Controllers
             }
 
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("updatetags")]
+        public async Task<IActionResult> UpdatePhotoTags([FromBody] UpdateTagDTO dto)
+        {
+            Photo photo = _photoRepo.GetById(dto.PhotoId);
+
+            photo.FaceTags = dto.Tags;
+            await _photoRepo.Update(photo);
+            return Ok();
         }
     }
 }
